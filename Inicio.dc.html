@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>MisJC2026 — Inicio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#FBFAF8; color:#10243E; font-family:'Archivo',sans-serif; }
+  a { color:#0B4EA2; } a:hover { color:#E03C31; }
+</style>
+</helmet>
+<nav style="display:flex; align-items:center; gap:28px; padding:16px 40px; background:#0B4EA2; color:#fff; position:sticky; top:0; z-index:50">
+  <div style="display:flex; align-items:center; gap:10px">
+    <div style="width:0; height:0; border-top:11px solid transparent; border-bottom:11px solid transparent; border-left:16px solid #9BCBEB"></div>
+    <span style="font-family:'Archivo Black'; font-size:20px; letter-spacing:0.5px">MisJC2026</span>
+  </div>
+  <div style="display:flex; gap:22px; margin-left:auto; font-weight:600; font-size:15px">
+    <a href="Inicio.dc.html" style="color:#9BCBEB; text-decoration:none">Inicio</a>
+    <a href="Diario.dc.html" style="color:#fff; text-decoration:none" style-hover="color:#9BCBEB">Diario</a>
+    <a href="Galeria.dc.html" style="color:#fff; text-decoration:none" style-hover="color:#9BCBEB">Galería</a>
+    <a href="Videos.dc.html" style="color:#fff; text-decoration:none" style-hover="color:#9BCBEB">Videos</a>
+    <a href="Documentos.dc.html" style="color:#fff; text-decoration:none" style-hover="color:#9BCBEB">Documentos</a>
+  </div>
+</nav>
+<header style="position:relative; background:#10243E; color:#fff; overflow:hidden">
+  <div style="display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr); gap:0; min-height:520px">
+    <div style="padding:64px 48px 64px 40px; display:flex; flex-direction:column; justify-content:center; gap:18px">
+      <div style="display:inline-flex; align-items:center; gap:10px; font-size:13px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:#9BCBEB">
+        <span style="width:34px; height:4px; background:#E03C31; display:inline-block"></span>
+        Santo Domingo · 24 jul — 8 ago 2026
+      </div>
+      <h1 style="font-family:'Archivo Black'; font-size:clamp(28px, 3.6vw, 56px); line-height:1.08; overflow-wrap:break-word; hyphens:auto; margin:0; text-wrap:pretty">Mi diario de los Juegos Centroamericanos</h1>
+      <p style="font-size:19px; line-height:1.55; color:#C9D6E6; margin:0; max-width:52ch">Fotos, videos y notas de mi viaje siguiendo a Puerto Rico en los Juegos Centroamericanos y del Caribe. Publicaré cada día durante el viaje — ¡acompáñame!</p>
+      <div style="display:flex; gap:14px; margin-top:10px">
+        <a href="Diario.dc.html" style="background:#E03C31; color:#fff; text-decoration:none; font-weight:700; padding:14px 26px; border-radius:6px; font-size:16px" style-hover="background:#c22f26; color:#fff">Leer el diario</a>
+        <a href="Galeria.dc.html" style="border:2px solid #9BCBEB; color:#9BCBEB; text-decoration:none; font-weight:700; padding:12px 26px; border-radius:6px; font-size:16px" style-hover="color:#fff; border-color:#fff">Ver fotos</a>
+      </div>
+    </div>
+    <div style="position:relative; min-height:420px; background:#fff; display:flex; align-items:center; justify-content:center; overflow:hidden">
+      <img src="{{ slideSrc }}" alt="{{ slideAlt }}" style="position:absolute; inset:6%; width:88%; height:88%; object-fit:contain; transition:opacity 0.4s; opacity:{{ slideOpacity }}">
+      <button onClick="{{ prevSlide }}" aria-label="Anterior" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); width:42px; height:42px; border-radius:50%; border:0; background:#0B4EA2; color:#fff; font-size:20px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center" style-hover="background:#E03C31">‹</button>
+      <button onClick="{{ nextSlide }}" aria-label="Siguiente" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); width:42px; height:42px; border-radius:50%; border:0; background:#0B4EA2; color:#fff; font-size:20px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center" style-hover="background:#E03C31">›</button>
+      <div style="position:absolute; bottom:14px; left:0; right:0; display:flex; justify-content:center; gap:8px">
+        <sc-for list="{{ dots }}" as="dot" hint-placeholder-count="7">
+          <button onClick="{{ dot.go }}" aria-label="Foto {{ dot.n }}" style="width:11px; height:11px; border-radius:50%; border:0; cursor:pointer; padding:0; background:{{ dot.color }}"></button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(5,1fr); height:14px">
+    <div style="background:#E03C31"></div><div style="background:#fff"></div><div style="background:#E03C31"></div><div style="background:#fff"></div><div style="background:#E03C31"></div>
+  </div>
+</header>
+<div style="display:none"><x-import component-from-global-scope="image-slot" from="./image-slot.js" id="loader-inicio" hint-size="0,0"></x-import></div>
+<section style="max-width:1080px; margin:0 auto; padding:56px 40px 8px">
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px; text-align:center">
+    <div style="background:#fff; border:1px solid #E4E1DA; border-radius:10px; padding:26px 16px">
+      <div style="font-family:'Archivo Black'; font-size:44px; color:#E03C31">{{ daysLeft }}</div>
+      <div style="font-weight:600; color:#5A6B80; font-size:14px; text-transform:uppercase; letter-spacing:1.5px">{{ daysLabel }}</div>
+    </div>
+    <div style="background:#fff; border:1px solid #E4E1DA; border-radius:10px; padding:26px 16px">
+      <div style="font-family:'Archivo Black'; font-size:44px; color:#0B4EA2">16</div>
+      <div style="font-weight:600; color:#5A6B80; font-size:14px; text-transform:uppercase; letter-spacing:1.5px">Días de viaje</div>
+    </div>
+    <div style="background:#fff; border:1px solid #E4E1DA; border-radius:10px; padding:26px 16px">
+      <div style="font-family:'Archivo Black'; font-size:44px; color:#10243E">PUR</div>
+      <div style="font-weight:600; color:#5A6B80; font-size:14px; text-transform:uppercase; letter-spacing:1.5px">Apoyando a los nuestros</div>
+    </div>
+  </div>
+</section>
+<section style="max-width:1080px; margin:0 auto; padding:48px 40px 72px">
+  <div style="display:flex; align-items:baseline; gap:14px; margin-bottom:24px">
+    <h2 style="font-family:'Archivo Black'; font-size:30px; margin:0">Última entrada</h2>
+    <a href="Diario.dc.html" style="font-weight:700; font-size:14px; text-decoration:none">Ver todas →</a>
+  </div>
+  <article style="display:grid; grid-template-columns:380px 1fr; gap:28px; background:#fff; border:1px solid #E4E1DA; border-radius:12px; overflow:hidden">
+    <div style="min-height:260px">
+      <image-slot id="ultima-foto" shape="rect" src="uploads/IMG_2296.jpeg" placeholder="Foto de la entrada más reciente"></image-slot>
+    </div>
+    <div style="padding:28px 32px 28px 4px; display:flex; flex-direction:column; gap:10px; justify-content:center">
+      <div style="display:flex; gap:10px; align-items:center">
+        <span style="background:#9BCBEB; color:#10243E; font-weight:700; font-size:12px; padding:4px 10px; border-radius:4px; letter-spacing:1px">LA PREVIA</span>
+        <span style="color:#5A6B80; font-size:14px; font-weight:600">Sábado 18 de julio</span>
+      </div>
+      <h3 style="font-family:'Archivo Black'; font-size:24px; margin:0">Preparándonos: visita a la tienda #EquipoPUR</h3>
+      <p style="margin:0; line-height:1.6; color:#3A4A5E">Fuimos a la tienda Olímpica a ver qué comprábamos para el viaje: camisas PUR, el jersey Joma oficial, pines de Santo Domingo 2026 y lanyards de Puerto Rico. ¡Ya se siente el ambiente!</p>
+      <a href="Diario.dc.html" style="font-weight:700; text-decoration:none; margin-top:6px">Ir al diario →</a>
+    </div>
+  </article>
+</section>
+<footer style="background:#10243E; color:#C9D6E6; padding:28px 40px; display:flex; justify-content:space-between; align-items:center; font-size:14px">
+  <span style="font-family:'Archivo Black'; color:#fff">MisJC2026</span>
+  <span>Santo Domingo 2026 · Hecho con orgullo boricua 🇵🇷</span>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { slide: 0, fading: false };
+  slides = [
+    { src: 'uploads/LOGO DETRAS.png', alt: 'Logo PUR' },
+    { src: 'uploads/brianna.png', alt: 'Brianna — Tenis de mesa, equipo femenino' },
+    { src: 'uploads/Adriana.png', alt: 'Adriana — Tenis de mesa, equipo femenino' },
+    { src: 'uploads/ChatGPT Image Jul 12, 2026 at 07_24_37 PM.png', alt: 'Natación — Puerto Rico' },
+    { src: 'uploads/ChatGPT Image Jul 12, 2026 at 07_24_45 PM.png', alt: 'Ramos, Atletismo — Puerto Rico' },
+    { src: 'uploads/ChatGPT Image Jul 12, 2026 at 07_25_31 PM.png', alt: 'Atletismo — Puerto Rico' },
+    { src: 'uploads/ChatGPT Image Jul 12, 2026 at 07_25_24 PM.png', alt: 'Baloncesto 3x3 — Puerto Rico' },
+    { src: 'uploads/ChatGPT Image Jul 12, 2026 at 07_25_14 PM.png', alt: 'Atletismo salto alto — Puerto Rico' },
+  ];
+  componentDidMount() {
+    this.timer = setInterval(() => this.goTo(this.state.slide + 1), 4500);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  goTo(n, manual) {
+    if (manual) { clearInterval(this.timer); this.timer = setInterval(() => this.goTo(this.state.slide + 1), 4500); }
+    const next = (n + this.slides.length) % this.slides.length;
+    this.setState({ fading: true });
+    setTimeout(() => this.setState({ slide: next, fading: false }), 250);
+  }
+  renderVals() {
+    const start = new Date(2026, 6, 24);
+    const end = new Date(2026, 7, 8);
+    const now = new Date();
+    const day = 86400000;
+    let daysLeft, daysLabel;
+    if (now < start) {
+      daysLeft = Math.ceil((start - now) / day);
+      daysLabel = daysLeft === 1 ? 'Día para el viaje' : 'Días para el viaje';
+    } else if (now <= end) {
+      daysLeft = Math.floor((now - start) / day) + 1;
+      daysLabel = 'Día del viaje';
+    } else {
+      daysLeft = 16;
+      daysLabel = 'Días vividos';
+    }
+    const cur = this.slides[this.state.slide];
+    return {
+      daysLeft, daysLabel,
+      slideSrc: cur.src, slideAlt: cur.alt,
+      slideOpacity: this.state.fading ? 0 : 1,
+      prevSlide: () => this.goTo(this.state.slide - 1, true),
+      nextSlide: () => this.goTo(this.state.slide + 1, true),
+      dots: this.slides.map((s, i) => ({
+        n: i + 1,
+        color: i === this.state.slide ? '#E03C31' : '#C9D6E6',
+        go: () => this.goTo(i, true),
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>

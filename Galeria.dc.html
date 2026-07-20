@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>MisJC2026 — Galería</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#FBFAF8; color:#10243E; font-family:'Archivo',sans-serif; }
+  a { color:#0B4EA2; } a:hover { color:#E03C31; }
+</style>
+</helmet>
+<nav style="display:flex; align-items:center; gap:28px; padding:16px 40px; background:#0B4EA2; color:#fff; position:sticky; top:0; z-index:50">
+  <div style="display:flex; align-items:center; gap:10px">
+    <div style="width:0; height:0; border-top:11px solid transparent; border-bottom:11px solid transparent; border-left:16px solid #9BCBEB"></div>
+    <span style="font-family:'Archivo Black'; font-size:20px; letter-spacing:0.5px">MisJC2026</span>
+  </div>
+  <div style="display:flex; gap:22px; margin-left:auto; font-weight:600; font-size:15px">
+    <a href="Inicio.dc.html" style="color:#fff; text-decoration:none" style-hover="color:#9BCBEB">Inicio</a>
+    <a href="Diario.dc.html" style="color:#fff; text-decoration:none" style-hover="color:#9BCBEB">Diario</a>
+    <a href="Galeria.dc.html" style="color:#9BCBEB; text-decoration:none">Galería</a>
+    <a href="Videos.dc.html" style="color:#fff; text-decoration:none" style-hover="color:#9BCBEB">Videos</a>
+    <a href="Documentos.dc.html" style="color:#fff; text-decoration:none" style-hover="color:#9BCBEB">Documentos</a>
+  </div>
+</nav>
+<div style="display:none"><x-import component-from-global-scope="image-slot" from="./image-slot.js" id="loader-galeria" hint-size="0,0"></x-import></div>
+<header style="background:#10243E; color:#fff; padding:56px 40px 48px">
+  <div style="max-width:1080px; margin:0 auto">
+    <div style="display:inline-flex; align-items:center; gap:10px; font-size:13px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:#9BCBEB">
+      <span style="width:34px; height:4px; background:#E03C31; display:inline-block"></span>
+      Fotos del viaje
+    </div>
+    <h1 style="font-family:'Archivo Black'; font-size:46px; margin:10px 0 8px">Galería</h1>
+    <p style="font-size:17px; color:#C9D6E6; margin:0; max-width:60ch; line-height:1.55">Un álbum por día en Dropbox. Toca cualquier tarjeta para ver todas las fotos de esa jornada.</p>
+  </div>
+</header>
+<div style="display:grid; grid-template-columns:repeat(5,1fr); height:10px">
+  <div style="background:#E03C31"></div><div style="background:#fff"></div><div style="background:#E03C31"></div><div style="background:#fff"></div><div style="background:#E03C31"></div>
+</div>
+<main style="max-width:1080px; margin:0 auto; padding:48px 40px 80px">
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px">
+    <sc-for list="{{ albums }}" as="al" hint-placeholder-count="6">
+      <div style="background:#fff; border:1px solid #E4E1DA; border-radius:12px; overflow:hidden; display:flex; flex-direction:column; opacity:{{ al.opacity }}">
+        <div style="height:180px"><image-slot id="{{ al.slotId }}" shape="rect" placeholder="Portada del álbum"></image-slot></div>
+        <div style="padding:16px 18px 18px; display:flex; flex-direction:column; gap:6px">
+          <div style="display:flex; align-items:center; gap:8px">
+            <span style="background:#9BCBEB; color:#10243E; font-weight:700; font-size:11px; padding:3px 8px; border-radius:4px; letter-spacing:1px">{{ al.tag }}</span>
+            <span style="color:#5A6B80; font-size:13px; font-weight:600">{{ al.fecha }}</span>
+          </div>
+          <div style="font-family:'Archivo Black'; font-size:18px">{{ al.titulo }}</div>
+          <sc-if value="{{ al.hasLink }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ al.url }}" target="_blank" rel="noopener" style="font-weight:700; font-size:14px; text-decoration:none; margin-top:4px">Ver álbum en Dropbox →</a>
+          </sc-if>
+          <sc-if value="{{ al.noLink }}" hint-placeholder-val="{{ true }}">
+            <span style="color:#5A6B80; font-size:13px; font-style:italic; margin-top:4px">Álbum disponible pronto</span>
+          </sc-if>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <p style="text-align:center; color:#5A6B80; font-size:14px; margin-top:28px">Cuando tengas el link de Dropbox de un día, pásamelo y lo activo. Arrastra una foto sobre cada tarjeta como portada.</p>
+</main>
+<footer style="background:#10243E; color:#C9D6E6; padding:28px 40px; display:flex; justify-content:space-between; align-items:center; font-size:14px">
+  <span style="font-family:'Archivo Black'; color:#fff">MisJC2026</span>
+  <span>Santo Domingo 2026 · Hecho con orgullo boricua 🇵🇷</span>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    // Pega aquí el link de Dropbox de cada día cuando lo tengas
+    const urlPrevia = 'https://www.dropbox.com/scl/fo/oi500gb4srmpeux0xcko9/AN9ER28NTjDXFgC7f7GpYeI?rlkey=hlxqp4wo0o28ezx2ignzc6204&st=z6yrb5p4&dl=0';
+    const dias = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']; // Día 1..16
+    const meses = ['jul', 'ago'];
+    const lista = [{ tag: 'LA PREVIA', fecha: 'Antes del viaje', titulo: 'La previa', url: urlPrevia, slotId: 'alb-previa' }];
+    for (let i = 0; i < 16; i++) {
+      const d = new Date(2026, 6, 24 + i);
+      lista.push({
+        tag: 'DÍA ' + (i + 1),
+        fecha: d.getDate() + ' ' + meses[d.getMonth() - 6],
+        titulo: 'Día ' + (i + 1),
+        url: dias[i],
+        slotId: 'alb-dia-' + (i + 1),
+      });
+    }
+    return { albums: lista.map(a => ({ ...a, hasLink: !!a.url, noLink: !a.url, opacity: a.url ? 1 : 0.65 })) };
+  }
+}
+</script>
+</body>
+</html>
