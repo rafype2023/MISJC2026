@@ -43,28 +43,59 @@
   <div style="background:#E03C31"></div><div style="background:#fff"></div><div style="background:#E03C31"></div><div style="background:#fff"></div><div style="background:#E03C31"></div>
 </div>
 <main style="max-width:920px; margin:0 auto; padding:48px 40px 80px; display:flex; flex-direction:column; gap:16px">
-  <a href="uploads/Reporte_Atletas_PUR_Santo_Domingo_2026-2.pdf" target="_blank" style="display:grid; grid-template-columns:64px 1fr auto; align-items:center; gap:20px; background:#fff; border:1px solid #E4E1DA; border-radius:12px; padding:20px 24px; text-decoration:none; color:#10243E" style-hover="border-color:#0B4EA2; color:#10243E">
-    <div style="width:64px; height:64px; border-radius:10px; background:#E03C31; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Archivo Black'; font-size:15px">PDF</div>
-    <div style="display:flex; flex-direction:column; gap:4px">
-      <span style="font-family:'Archivo Black'; font-size:18px">Reporte de Atletas PUR — Santo Domingo 2026</span>
-      <span style="color:#5A6B80; font-size:14px; line-height:1.5">Calendario de los días en que participan nuestros atletas.</span>
-    </div>
-    <span style="font-weight:700; color:#0B4EA2; font-size:14px; white-space:nowrap">Abrir →</span>
-  </a>
-  <a href="uploads/Reporte_Equipos_PUR_Rivales_Santo_Domingo_2026.pdf" target="_blank" style="display:grid; grid-template-columns:64px 1fr auto; align-items:center; gap:20px; background:#fff; border:1px solid #E4E1DA; border-radius:12px; padding:20px 24px; text-decoration:none; color:#10243E" style-hover="border-color:#0B4EA2; color:#10243E">
-    <div style="width:64px; height:64px; border-radius:10px; background:#0B4EA2; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Archivo Black'; font-size:15px">PDF</div>
-    <div style="display:flex; flex-direction:column; gap:4px">
-      <span style="font-family:'Archivo Black'; font-size:18px">Reporte de Equipos PUR y Rivales — Santo Domingo 2026</span>
-      <span style="color:#5A6B80; font-size:14px; line-height:1.5">Equipos de Puerto Rico y sus rivales en los Juegos.</span>
-    </div>
-    <span style="font-weight:700; color:#0B4EA2; font-size:14px; white-space:nowrap">Abrir →</span>
-  </a>
-  <p style="text-align:center; color:#5A6B80; font-size:14px; margin-top:16px">Para agregar más documentos, pásamelos y los publico aquí.</p>
+  <sc-for list="{{ documentos }}" as="doc" hint-placeholder-count="2">
+    <a href="{{ doc.url }}" target="_blank" style="display:grid; grid-template-columns:64px 1fr auto; align-items:center; gap:20px; background:#fff; border:1px solid #E4E1DA; border-radius:12px; padding:20px 24px; text-decoration:none; color:#10243E" style-hover="border-color:#0B4EA2; color:#10243E">
+      <div style="width:64px; height:64px; border-radius:10px; background:{{ doc.color }}; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Archivo Black'; font-size:15px">{{ doc.tipo }}</div>
+      <div style="display:flex; flex-direction:column; gap:4px">
+        <span style="font-family:'Archivo Black'; font-size:18px">{{ doc.titulo }}</span>
+        <span style="color:#5A6B80; font-size:14px; line-height:1.5">{{ doc.descripcion }}</span>
+      </div>
+      <span style="font-weight:700; color:#0B4EA2; font-size:14px; white-space:nowrap">Abrir →</span>
+    </a>
+  </sc-for>
+  <p style="text-align:center; color:#5A6B80; font-size:14px; margin-top:16px">Para agregar más documentos, utiliza el panel de edición local.</p>
 </main>
 <footer style="background:#10243E; color:#C9D6E6; padding:28px 40px; display:flex; justify-content:space-between; align-items:center; font-size:14px">
   <span style="font-family:'Archivo Black'; color:#fff">MisJC2026</span>
+  <sc-if value="{{ esLocal }}" hint-placeholder-val="{{ false }}">
+    <a href="editar.html" style="color:#9BCBEB; text-decoration:none; font-weight:600" style-hover="color:#fff">⚙️ Editar Sitio</a>
+  </sc-if>
   <span>Santo Domingo 2026 · Hecho con orgullo boricua 🇵🇷</span>
 </footer>
 </x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { data: null };
+  componentDidMount() {
+    fetch('diario_data.json')
+      .then(r => r.json())
+      .then(data => this.setState({ data }))
+      .catch(err => console.error('Error al cargar diario_data.json:', err));
+  }
+  renderVals() {
+    const defaultDocs = [
+      {
+        tipo: "PDF",
+        titulo: "Reporte de Atletas PUR — Santo Domingo 2026",
+        descripcion: "Calendario de los días en que participan nuestros atletas.",
+        url: "uploads/Reporte_Atletas_PUR_Santo_Domingo_2026-2.pdf",
+        color: "#E03C31"
+      },
+      {
+        tipo: "PDF",
+        titulo: "Reporte de Equipos PUR y Rivales — Santo Domingo 2026",
+        descripcion: "Equipos de Puerto Rico y sus rivales en los Juegos.",
+        url: "uploads/Reporte_Equipos_PUR_Rivales_Santo_Domingo_2026.pdf",
+        color: "#0B4EA2"
+      }
+    ];
+    const documentos = (this.state.data && this.state.data.documentos) || defaultDocs;
+    const esLocal = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' || 
+                    window.location.protocol === 'file:';
+    return { documentos, esLocal };
+  }
+}
+</script>
 </body>
 </html>

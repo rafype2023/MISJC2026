@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MisJC2026 — Editor de Contenidos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Archivo+Black&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #0B4EA2;
+      --color-accent: #E03C31;
+      --color-accent-hover: #c22f26;
+      --color-bg: #0d1a2d;
+      --color-card-bg: rgba(16, 36, 62, 0.65);
+      --color-border: rgba(155, 203, 235, 0.2);
+      --color-text: #f0f4f8;
+      --color-text-muted: #9BCBEB;
+    }
+
+    body {
+      margin: 0;
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: 'Archivo', sans-serif;
+      background-image: radial-gradient(circle at 10% 20%, rgba(11, 78, 162, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(224, 60, 49, 0.1) 0%, transparent 40%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: rgba(8, 16, 30, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px 40px;
+      display: flex;
+      align-items:center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-triangle {
+      width: 0;
+      height: 0;
+      border-top: 11px solid transparent;
+      border-bottom: 11px solid transparent;
+      border-left: 16px solid var(--color-text-muted);
+    }
+
+    .logo-text {
+      font-family: 'Archivo Black';
+      font-size: 20px;
+      letter-spacing: 0.5px;
+      color: #fff;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--color-accent);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(224, 60, 49, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: var(--color-accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(155, 203, 235, 0.1);
+      color: var(--color-text-muted);
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(155, 203, 235, 0.2);
+      color: #fff;
+    }
+
+    .btn-danger {
+      background: rgba(224, 60, 49, 0.15);
+      color: #ff6b6b;
+      border: 1px solid rgba(224, 60, 49, 0.3);
+    }
+
+    .btn-danger:hover {
+      background: rgba(224, 60, 49, 0.3);
+    }
+
+    .badge-success {
+      background: #2ec4b6;
+      color: #0d1a2d;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .editor-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      box-sizing: border-box;
+      padding: 32px 40px;
+      gap: 32px;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--color-text-muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      padding-left: 12px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 0;
+      color: rgba(255, 255, 255, 0.6);
+      font-family: 'Archivo', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: left;
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .tab-btn.active {
+      background: var(--color-primary);
+      color: #fff;
+      border-left: 4px solid var(--color-accent);
+      padding-left: 12px;
+    }
+
+    .main-panel {
+      background: var(--color-card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 32px;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+
+    .panel-header {
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-title {
+      font-family: 'Archivo Black';
+      font-size: 26px;
+      margin: 0;
+    }
+
+    .panel-desc {
+      color: var(--color-text-muted);
+      margin: 6px 0 0 0;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--color-text-muted);
+    }
+
+    input[type="text"], input[type="password"], textarea, select {
+      background: rgba(8, 16, 30, 0.6);
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Archivo', sans-serif;
+      font-size: 15px;
+      padding: 12px;
+      box-sizing: border-box;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+      border-color: var(--color-text-muted);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .day-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .day-selector-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      color: #fff;
+      font-family: 'Archivo', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 10px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .day-selector-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .day-selector-btn.active {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+    }
+
+    .day-selector-btn.has-content {
+      border-bottom: 3px solid #2ec4b6;
+    }
+
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card-item {
+      background: rgba(8, 16, 30, 0.4);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+    }
+
+    .card-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-item-title {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .dropbox-links-area {
+      min-height: 200px;
+    }
+
+    .publish-steps-box {
+      margin-top: auto;
+      background: rgba(11, 78, 162, 0.15);
+      border: 1px solid rgba(155, 203, 235, 0.3);
+      border-radius: 8px;
+      padding: 18px;
+      display: flex;
+      gap: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .publish-icon {
+      font-size: 24px;
+    }
+
+    .status-banner {
+      background: rgba(46, 196, 182, 0.15);
+      border: 1px solid #2ec4b6;
+      color: #2ec4b6;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .status-banner.warning {
+      background: rgba(224, 60, 49, 0.15);
+      border: 1px solid var(--color-accent);
+      color: #ff6b6b;
+    }
+
+    .status-banner button {
+      background: transparent;
+      border: 0;
+      color: inherit;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* Modal for saving instructions */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--color-bg);
+      border: 2px solid var(--color-accent);
+      border-radius: 12px;
+      max-width: 550px;
+      width: 100%;
+      padding: 32px;
+      box-sizing: border-box;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .modal-title {
+      font-family: 'Archivo Black';
+      font-size: 22px;
+      margin: 0;
+      color: var(--color-accent);
+    }
+
+    .modal-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      line-height: 1.5;
+    }
+
+    .modal-step {
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-number {
+      background: var(--color-primary);
+      color: #fff;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+      font-size: 13px;
+    }
+
+    code {
+      background: rgba(255,255,255,0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      color: var(--color-text-muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <div class="logo-triangle"></div>
+      <span class="logo-text">MisJC2026 — Editor</span>
+    </div>
+    <div class="header-actions">
+      <a href="Inicio.dc.html" class="btn btn-secondary">← Volver al Sitio</a>
+      <button onclick="copiarJSON()" class="btn btn-secondary">📋 Copiar JSON</button>
+      <button onclick="guardarTodo()" class="btn btn-primary">💾 Guardar Cambios</button>
+    </div>
+  </header>
+
+  <div class="editor-container">
+    <div class="sidebar">
+      <div class="sidebar-title">Secciones</div>
+      <button id="tab-diario" class="tab-btn active" onclick="switchTab('diario')">📝 Diario</button>
+      <button id="tab-galeria" class="tab-btn" onclick="switchTab('galeria')">📸 Dropbox Fotos</button>
+      <button id="tab-videos" class="tab-btn" onclick="switchTab('videos')">🎬 Videos</button>
+      <button id="tab-documentos" class="tab-btn" onclick="switchTab('documentos')">📄 Documentos</button>
+      <button id="tab-carrusel" class="tab-btn" onclick="switchTab('carrusel')">🎠 Carrusel de Inicio</button>
+      <div class="sidebar-title" style="margin-top: 16px;">Configuración</div>
+      <button id="tab-github" class="tab-btn" onclick="switchTab('github')">⚙️ Conexión GitHub</button>
+    </div>
+
+    <main class="main-panel">
+      <div id="status-banner" class="status-banner">
+        <span id="status-msg">Cambios guardados con éxito.</span>
+        <button onclick="cerrarBanner()">✕</button>
+      </div>
+
+      <!-- Tab: Diario -->
+      <div id="panel-diario" class="tab-content" style="display: block;">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Entradas del Diario</h2>
+            <p class="panel-desc">Escribe el título y la nota del día. La página principal mostrará automáticamente la última que escribas.</p>
+          </div>
+        </div>
+
+        <div class="day-selector" id="diario-day-selector">
+          <!-- Dynamically populated day selector buttons -->
+        </div>
+
+        <div id="diario-form-area">
+          <div class="form-group">
+            <label for="dia-fecha">Fecha en el distintivo</label>
+            <input type="text" id="dia-fecha" placeholder="Ej. Vie 24 jul">
+          </div>
+          <div class="form-group">
+            <label for="dia-titulo">Título de la Entrada</label>
+            <input type="text" id="dia-titulo" placeholder="Escribe el título llamativo de este día">
+          </div>
+          <div class="form-group">
+            <label for="dia-nota">Cuerpo de la Nota</label>
+            <textarea id="dia-nota" rows="8" placeholder="Escribe lo que viviste este día, cómo le fue a los boricuas y lo mejor de la jornada..."></textarea>
+          </div>
+          <div id="dia-slot-info" style="font-size: 13px; color: var(--color-text-muted); background: rgba(11,78,162,0.1); padding: 12px; border-radius: 6px;">
+            📸 Para añadir la foto de este día, simplemente entra a la página del <strong>Diario</strong> y arrastra la foto sobre el espacio gris del día correspondiente. Se guardará de forma automática en el sitio.
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Galeria -->
+      <div id="panel-galeria" class="tab-content" style="display: none;">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Fotos de Dropbox</h2>
+            <p class="panel-desc">Pega los enlaces compartidos de Dropbox de tus fotos. Coloca un enlace por línea.</p>
+          </div>
+        </div>
+
+        <div class="day-selector" id="galeria-day-selector">
+          <!-- Dynamically populated day selector buttons -->
+        </div>
+
+        <div class="form-group">
+          <label id="dropbox-label" for="dropbox-links">Enlaces compartidos de Dropbox (Uno por línea)</label>
+          <textarea id="dropbox-links" class="dropbox-links-area" rows="12" placeholder="https://www.dropbox.com/scl/fi/.../foto.jpeg?rlkey=...&dl=0" oninput="onDropboxLinksChange()"></textarea>
+          <span style="font-size: 12px; color: var(--color-text-muted); margin-top: 4px;">
+            💡 Consejo: Copia el enlace de tu archivo/foto en Dropbox y pégalo aquí. El sistema lo convertirá para mostrar la imagen directamente.
+          </span>
+        </div>
+      </div>
+
+      <!-- Tab: Videos -->
+      <div id="panel-videos" class="tab-content" style="display: none;">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Videos del Viaje</h2>
+            <p class="panel-desc">Administra los enlaces de YouTube de los videos del viaje.</p>
+          </div>
+          <button onclick="agregarVideo()" class="btn btn-secondary">➕ Añadir Video</button>
+        </div>
+
+        <div class="card-list" id="videos-card-list">
+          <!-- Dynamically populated videos -->
+        </div>
+      </div>
+
+      <!-- Tab: Documentos -->
+      <div id="panel-documentos" class="tab-content" style="display: none;">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Documentos de Referencia</h2>
+            <p class="panel-desc">Añade o modifica los archivos de referencia del viaje (como guías o PDF de calendarios).</p>
+          </div>
+          <button onclick="agregarDocumento()" class="btn btn-secondary">➕ Añadir Documento</button>
+        </div>
+
+        <div class="card-list" id="documentos-card-list">
+          <!-- Dynamically populated docs -->
+        </div>
+      </div>
+
+      <!-- Tab: Carrusel -->
+      <div id="panel-carrusel" class="tab-content" style="display: none;">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Carrusel de Fotos</h2>
+            <p class="panel-desc">Administra las imágenes rotativas de la portada del sitio.</p>
+          </div>
+          <button onclick="agregarCarrusel()" class="btn btn-secondary">➕ Añadir Imagen</button>
+        </div>
+
+        <div class="card-list" id="carrusel-card-list">
+          <!-- Dynamically populated slides -->
+        </div>
+      </div>
+
+      <!-- Tab: GitHub Conexión -->
+      <div id="panel-github" class="tab-content" style="display: none;">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Configuración de GitHub</h2>
+            <p class="panel-desc">Conecta el editor con tu cuenta de GitHub para que las actualizaciones se publiquen automáticamente en internet.</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="gh-repo">Repositorio en GitHub</label>
+          <input type="text" id="gh-repo" value="rafype2023/MISJC2026" placeholder="usuario/repositorio" oninput="onRepoChange()">
+        </div>
+        <div class="form-group">
+          <label for="gh-token">Personal Access Token (PAT) de GitHub</label>
+          <input type="password" id="gh-token" placeholder="ghp_..." oninput="onTokenChange()">
+          <span style="font-size: 13.5px; color: var(--color-text-muted); margin-top: 6px; line-height: 1.45;">
+            🔑 <strong>Seguridad</strong>: Este token se guarda únicamente en el almacenamiento local de tu propio navegador (`localStorage`). Ningún servidor externo tiene acceso a él.<br><br>
+            <strong>¿Cómo crear un token?</strong><br>
+            1. Haz clic aquí para ir a GitHub: <a href="https://github.com/settings/tokens/new?scopes=repo&description=MisJC2026%20Editor" target="_blank" style="color: var(--color-accent); font-weight: 600; text-decoration: underline;">Crear Token de Acceso</a>.<br>
+            2. Activa la casilla <strong>repo</strong> (permite escribir en el repositorio).<br>
+            3. Haz clic en "Generate token" al final de la página de GitHub.<br>
+            4. Copia el token generado y pégalo en el campo superior.
+          </span>
+        </div>
+      </div>
+
+      <!-- Publish Guidelines Box -->
+      <div class="publish-steps-box">
+        <div class="publish-icon">🚀</div>
+        <div>
+          <strong>¿Cómo publicar los cambios?</strong>
+          <ol style="margin: 6px 0 0 0; padding-left: 20px; color: var(--color-text-muted)">
+            <li>Completa la pestaña <strong>⚙️ Conexión GitHub</strong> con tu token (solo debes hacerlo la primera vez).</li>
+            <li>Haz clic en el botón rojo superior <strong>Guardar Cambios</strong>.</li>
+            <li>¡Listo! El editor actualizará el archivo en GitHub automáticamente y <strong>Render.com compilará y actualizará el sitio en 1 o 2 minutos</strong>.</li>
+          </ol>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal instructivo si no hay API de archivos ni token -->
+  <div id="save-modal" class="modal">
+    <div class="modal-content">
+      <h3 class="modal-title">¡Guardando datos del Diario!</h3>
+      <p>El navegador descargará un archivo llamado <code>diario_data.json</code>.</p>
+      <div class="modal-steps">
+        <div class="modal-step">
+          <div class="modal-number">1</div>
+          <div>Guarda el archivo en tu computadora.</div>
+        </div>
+        <div class="modal-step">
+          <div class="modal-number">2</div>
+          <div>Mueve o copia ese archivo a la carpeta del proyecto <strong>MisJC2026 travel portfolio</strong> para reemplazar el anterior.</div>
+        </div>
+        <div class="modal-step">
+          <div class="modal-number">3</div>
+          <div>Ejecuta el script <code>actualizar.command</code> para subir tus cambios a internet.</div>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+        <button onclick="cerrarModal()" class="btn btn-primary">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let db = null;
+    let activeTab = 'diario';
+    let activeDiarioDay = 'previa'; // 'previa' or 1..16
+    let activeGaleriaDay = 'previa'; // 'previa' or 'dia1'..'dia16'
+
+    // Load initial JSON
+    async function loadData() {
+      try {
+        const response = await fetch('diario_data.json');
+        db = await response.json();
+        inicializarUI();
+      } catch (err) {
+        console.error('Error al cargar diario_data.json. Iniciando base de datos vacía.', err);
+        db = {
+          viaje: { fecha_inicio: "2026-07-24", fecha_fin: "2026-08-08", titulo: "MisJC2026", descripcion: "Santo Domingo 2026 · Hecho con orgullo boricua" },
+          carrusel: [],
+          previa: { fecha: "Sáb 18 jul", titulo: "", nota: "", fotos: [] },
+          diario: Array.from({length: 16}, (_, i) => ({ num: i + 1, fecha: "", titulo: "", nota: "" })),
+          dropbox_fotos: { previa: [] },
+          videos: [],
+          documentos: []
+        };
+        for(let i=1; i<=16; i++) {
+          db.dropbox_fotos['dia' + i] = [];
+        }
+        inicializarUI();
+      }
+    }
+
+    function inicializarUI() {
+      // Pre-fill GitHub Config
+      document.getElementById('gh-repo').value = localStorage.getItem('gh_repo') || 'rafype2023/MISJC2026';
+      document.getElementById('gh-token').value = localStorage.getItem('gh_token') || '';
+
+      renderDiarioSelector();
+      renderGaleriaSelector();
+      loadDiarioDay();
+      loadGaleriaDay();
+      renderVideos();
+      renderDocumentos();
+      renderCarrusel();
+    }
+
+    function onTokenChange() {
+      const val = document.getElementById('gh-token').value.trim();
+      localStorage.setItem('gh_token', val);
+    }
+
+    function onRepoChange() {
+      const val = document.getElementById('gh-repo').value.trim();
+      localStorage.setItem('gh_repo', val);
+    }
+
+    // Switch between tabs
+    function switchTab(tabName) {
+      activeTab = tabName;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('tab-' + tabName).classList.add('active');
+
+      document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+      document.getElementById('panel-' + tabName).style.display = 'block';
+    }
+
+    // --- TAB: DIARIO ---
+    function renderDiarioSelector() {
+      const container = document.getElementById('diario-day-selector');
+      container.innerHTML = '';
+
+      // La previa
+      const btnPrevia = document.createElement('button');
+      btnPrevia.className = `day-selector-btn ${activeDiarioDay === 'previa' ? 'active' : ''}`;
+      if (db.previa && (db.previa.titulo || db.previa.nota)) btnPrevia.classList.add('has-content');
+      btnPrevia.textContent = 'Previa';
+      btnPrevia.onclick = () => { selectDiarioDay('previa'); };
+      container.appendChild(btnPrevia);
+
+      // Days 1 to 16
+      db.diario.forEach(d => {
+        const btn = document.createElement('button');
+        btn.className = `day-selector-btn ${activeDiarioDay === d.num ? 'active' : ''}`;
+        if (d.titulo || d.nota) btn.classList.add('has-content');
+        btn.textContent = `Día ${d.num}`;
+        btn.onclick = () => { selectDiarioDay(d.num); };
+        container.appendChild(btn);
+      });
+    }
+
+    function selectDiarioDay(day) {
+      saveActiveDiarioDayToMemory();
+      activeDiarioDay = day;
+      renderDiarioSelector();
+      loadDiarioDay();
+    }
+
+    function loadDiarioDay() {
+      const fechaInput = document.getElementById('dia-fecha');
+      const tituloInput = document.getElementById('dia-titulo');
+      const notaInput = document.getElementById('dia-nota');
+
+      if (activeDiarioDay === 'previa') {
+        fechaInput.value = db.previa.fecha || '';
+        tituloInput.value = db.previa.titulo || '';
+        notaInput.value = db.previa.nota || '';
+      } else {
+        const d = db.diario.find(x => x.num === activeDiarioDay);
+        fechaInput.value = d ? d.fecha : '';
+        tituloInput.value = d ? d.titulo : '';
+        notaInput.value = d ? d.nota : '';
+      }
+    }
+
+    function saveActiveDiarioDayToMemory() {
+      const fechaVal = document.getElementById('dia-fecha').value;
+      const tituloVal = document.getElementById('dia-titulo').value;
+      const notaVal = document.getElementById('dia-nota').value;
+
+      if (activeDiarioDay === 'previa') {
+        if (!db.previa) db.previa = { fotos: [] };
+        db.previa.fecha = fechaVal;
+        db.previa.titulo = tituloVal;
+        db.previa.nota = notaVal;
+      } else {
+        const d = db.diario.find(x => x.num === activeDiarioDay);
+        if (d) {
+          d.fecha = fechaVal;
+          d.titulo = tituloVal;
+          d.nota = notaVal;
+        }
+      }
+    }
+
+    // --- TAB: GALERIA ---
+    function renderGaleriaSelector() {
+      const container = document.getElementById('galeria-day-selector');
+      container.innerHTML = '';
+
+      // La previa
+      const btnPrevia = document.createElement('button');
+      btnPrevia.className = `day-selector-btn ${activeGaleriaDay === 'previa' ? 'active' : ''}`;
+      const prevCount = (db.dropbox_fotos.previa || []).length;
+      if (prevCount > 0) btnPrevia.classList.add('has-content');
+      btnPrevia.textContent = `Previa (${prevCount})`;
+      btnPrevia.onclick = () => { selectGaleriaDay('previa'); };
+      container.appendChild(btnPrevia);
+
+      // Days 1 to 16
+      for (let i = 1; i <= 16; i++) {
+        const key = 'dia' + i;
+        const btn = document.createElement('button');
+        btn.className = `day-selector-btn ${activeGaleriaDay === key ? 'active' : ''}`;
+        const count = (db.dropbox_fotos[key] || []).length;
+        if (count > 0) btn.classList.add('has-content');
+        btn.textContent = `Día ${i} (${count})`;
+        btn.onclick = () => { selectGaleriaDay(key); };
+        container.appendChild(btn);
+      }
+    }
+
+    function selectGaleriaDay(dayKey) {
+      activeGaleriaDay = dayKey;
+      renderGaleriaSelector();
+      loadGaleriaDay();
+    }
+
+    function loadGaleriaDay() {
+      const label = document.getElementById('dropbox-label');
+      const textarea = document.getElementById('dropbox-links');
+      
+      const readableName = activeGaleriaDay === 'previa' ? 'La Previa' : 'Día ' + activeGaleriaDay.replace('dia', '');
+      label.textContent = `Enlaces compartidos de Dropbox para ${readableName} (Uno por línea)`;
+
+      const links = db.dropbox_fotos[activeGaleriaDay] || [];
+      textarea.value = links.join('\n');
+    }
+
+    function onDropboxLinksChange() {
+      const text = document.getElementById('dropbox-links').value;
+      const array = text.split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line.length > 0);
+      db.dropbox_fotos[activeGaleriaDay] = array;
+      renderGaleriaSelector();
+    }
+
+    // --- TAB: VIDEOS ---
+    function renderVideos() {
+      const container = document.getElementById('videos-card-list');
+      container.innerHTML = '';
+
+      if (!db.videos || db.videos.length === 0) {
+        container.innerHTML = '<div style="color: var(--color-text-muted); text-align: center; padding: 40px; font-style: italic;">No hay videos agregados.</div>';
+        return;
+      }
+
+      db.videos.forEach((video, index) => {
+        const item = document.createElement('div');
+        item.className = 'card-item';
+        item.innerHTML = `
+          <div class="card-item-header">
+            <span class="card-item-title">Video #${index + 1}</span>
+            <button onclick="eliminarVideo(${index})" class="btn btn-danger btn-sm" style="padding: 5px 10px; font-size: 11px;">Eliminar</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1.5fr 2fr; gap: 12px;">
+            <div class="form-group" style="margin:0">
+              <label>Etiqueta / Tag</label>
+              <input type="text" value="${video.tag || ''}" oninput="updateVideo(${index}, 'tag', this.value)" placeholder="Ej. La previa">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Título del Video</label>
+              <input type="text" value="${video.titulo || ''}" oninput="updateVideo(${index}, 'titulo', this.value)" placeholder="Título descriptivo">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Enlace de YouTube</label>
+              <input type="text" value="${video.url || ''}" oninput="updateVideo(${index}, 'url', this.value)" placeholder="https://youtu.be/...">
+            </div>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function updateVideo(index, key, val) {
+      db.videos[index][key] = val;
+    }
+
+    function agregarVideo() {
+      if (!db.videos) db.videos = [];
+      db.videos.push({ tag: "Día " + (db.videos.length + 1), titulo: "", url: "" });
+      renderVideos();
+    }
+
+    function eliminarVideo(index) {
+      if (confirm('¿Deseas eliminar este video?')) {
+        db.videos.splice(index, 1);
+        renderVideos();
+      }
+    }
+
+    // --- TAB: DOCUMENTOS ---
+    function renderDocumentos() {
+      const container = document.getElementById('documentos-card-list');
+      container.innerHTML = '';
+
+      if (!db.documentos || db.documentos.length === 0) {
+        container.innerHTML = '<div style="color: var(--color-text-muted); text-align: center; padding: 40px; font-style: italic;">No hay documentos agregados.</div>';
+        return;
+      }
+
+      db.documentos.forEach((doc, index) => {
+        const item = document.createElement('div');
+        item.className = 'card-item';
+        item.innerHTML = `
+          <div class="card-item-header">
+            <span class="card-item-title">Documento #${index + 1}</span>
+            <button onclick="eliminarDocumento(${index})" class="btn btn-danger btn-sm" style="padding: 5px 10px; font-size: 11px;">Eliminar</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 80px 1.5fr 1fr; gap: 12px; margin-bottom: 10px;">
+            <div class="form-group" style="margin:0">
+              <label>Tipo</label>
+              <input type="text" value="${doc.tipo || 'PDF'}" oninput="updateDocument(${index}, 'tipo', this.value)" placeholder="Ej. PDF">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Título</label>
+              <input type="text" value="${doc.titulo || ''}" oninput="updateDocument(${index}, 'titulo', this.value)" placeholder="Título del reporte">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Color distintivo</label>
+              <select onchange="updateDocument(${index}, 'color', this.value)">
+                <option value="#E03C31" ${doc.color === '#E03C31' ? 'selected' : ''}>Rojo PUR</option>
+                <option value="#0B4EA2" ${doc.color === '#0B4EA2' ? 'selected' : ''}>Azul PUR</option>
+                <option value="#10243E" ${doc.color === '#10243E' ? 'selected' : ''}>Azul Oscuro</option>
+                <option value="#2ec4b6" ${doc.color === '#2ec4b6' ? 'selected' : ''}>Turquesa</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group" style="margin:0">
+              <label>Descripción corta</label>
+              <input type="text" value="${doc.descripcion || ''}" oninput="updateDocument(${index}, 'descripcion', this.value)" placeholder="Breve descripción del archivo">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Enlace del Archivo</label>
+              <input type="text" value="${doc.url || ''}" oninput="updateDocument(${index}, 'url', this.value)" placeholder="uploads/mi-documento.pdf">
+            </div>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function updateDocument(index, key, val) {
+      db.documentos[index][key] = val;
+    }
+
+    function agregarDocumento() {
+      if (!db.documentos) db.documentos = [];
+      db.documentos.push({ tipo: "PDF", titulo: "", descripcion: "", url: "", color: "#E03C31" });
+      renderDocumentos();
+    }
+
+    function eliminarDocumento(index) {
+      if (confirm('¿Deseas eliminar este documento?')) {
+        db.documentos.splice(index, 1);
+        renderDocumentos();
+      }
+    }
+
+    // --- TAB: CARRUSEL ---
+    function renderCarrusel() {
+      const container = document.getElementById('carrusel-card-list');
+      container.innerHTML = '';
+
+      if (!db.carrusel || db.carrusel.length === 0) {
+        container.innerHTML = '<div style="color: var(--color-text-muted); text-align: center; padding: 40px; font-style: italic;">No hay fotos en el carrusel de inicio.</div>';
+        return;
+      }
+
+      db.carrusel.forEach((slide, index) => {
+        const item = document.createElement('div');
+        item.className = 'card-item';
+        item.innerHTML = `
+          <div class="card-item-header">
+            <span class="card-item-title">Imagen de Carrusel #${index + 1}</span>
+            <button onclick="eliminarCarrusel(${index})" class="btn btn-danger btn-sm" style="padding: 5px 10px; font-size: 11px;">Eliminar</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group" style="margin:0">
+              <label>Ruta de la Imagen</label>
+              <input type="text" value="${slide.src || ''}" oninput="updateCarrusel(${index}, 'src', this.value)" placeholder="uploads/foto.png">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Texto alternativo / Leyenda</label>
+              <input type="text" value="${slide.alt || ''}" oninput="updateCarrusel(${index}, 'alt', this.value)" placeholder="Atleta o evento">
+            </div>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function updateCarrusel(index, key, val) {
+      db.carrusel[index][key] = val;
+    }
+
+    function agregarCarrusel() {
+      if (!db.carrusel) db.carrusel = [];
+      db.carrusel.push({ src: "", alt: "" });
+      renderCarrusel();
+    }
+
+    function eliminarCarrusel(index) {
+      if (confirm('¿Deseas eliminar esta imagen de la portada?')) {
+        db.carrusel.splice(index, 1);
+        renderCarrusel();
+      }
+    }
+
+    // --- SAVE AND EXPORT ---
+    function copiarJSON() {
+      saveActiveDiarioDayToMemory();
+      const content = JSON.stringify(db, null, 2);
+      navigator.clipboard.writeText(content).then(() => {
+        mostrarMensaje('¡JSON de datos copiado al portapapeles! Puedes pegarlo en tu editor local.');
+      });
+    }
+
+    async function guardarTodo() {
+      saveActiveDiarioDayToMemory();
+      const content = JSON.stringify(db, null, 2);
+
+      const token = (localStorage.getItem('gh_token') || '').trim();
+      const repo = (localStorage.getItem('gh_repo') || 'rafype2023/MISJC2026').trim();
+
+      if (token) {
+        mostrarMensaje('💾 Conectando con GitHub para subir los cambios...', false);
+        try {
+          const path = 'diario_data.json';
+          const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+          
+          // 1. Obtener SHA actual del archivo en GitHub
+          const getRes = await fetch(url, {
+            headers: {
+              'Authorization': `token ${token}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          });
+          
+          let sha = null;
+          if (getRes.status === 200) {
+            const fileData = await getRes.json();
+            sha = fileData.sha;
+          } else if (getRes.status !== 404) {
+            throw new Error(`No se pudo obtener el estado del archivo en GitHub. Status: ${getRes.status}`);
+          }
+          
+          // 2. Codificar contenido en base64 de manera segura con UTF-8
+          const utf8Bytes = new TextEncoder().encode(content);
+          let binary = "";
+          const len = utf8Bytes.byteLength;
+          for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(utf8Bytes[i]);
+          }
+          const base64Content = btoa(binary);
+          
+          // 3. Hacer PUT a GitHub
+          const putBody = {
+            message: `Actualización de diario web ${new Date().toLocaleString()}`,
+            content: base64Content,
+            branch: 'main'
+          };
+          if (sha) {
+            putBody.sha = sha;
+          }
+          
+          const putRes = await fetch(url, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `token ${token}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(putBody)
+          });
+          
+          if (putRes.status === 200 || putRes.status === 201) {
+            mostrarMensaje('🚀 <strong>¡Cambios subidos a GitHub con éxito!</strong> Render.com detectará la actualización y recompilará tu sitio en 1 o 2 minutos. No necesitas hacer nada más.');
+            return;
+          } else {
+            const errData = await putRes.json();
+            throw new Error(errData.message || `Status: ${putRes.status}`);
+          }
+        } catch (err) {
+          console.error('Error al guardar en GitHub:', err);
+          mostrarMensaje(`❌ Error al subir a GitHub: ${err.message}. Descargando respaldo local...`, true);
+          await descargarJSONLocal(content);
+        }
+      } else {
+        // Fallback si no hay token
+        await descargarJSONLocal(content);
+      }
+    }
+
+    async function descargarJSONLocal(content) {
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: 'diario_data.json',
+            types: [{
+              description: 'JSON de Datos del Diario',
+              accept: { 'application/json': ['.json'] }
+            }]
+          });
+          const writable = await handle.createWritable();
+          await writable.write(content);
+          await writable.close();
+          mostrarMensaje('¡Se guardaron los datos localmente en diario_data.json! Recuerda agregarlo a tu carpeta del proyecto.');
+          return;
+        } catch (err) {
+          console.warn('Save File picker cancelado:', err);
+        }
+      }
+
+      const blob = new Blob([content], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'diario_data.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      document.getElementById('save-modal').style.display = 'flex';
+    }
+
+    function mostrarMensaje(text, isError = false) {
+      const banner = document.getElementById('status-banner');
+      banner.className = isError ? 'status-banner warning' : 'status-banner';
+      document.getElementById('status-msg').innerHTML = text;
+      banner.style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function cerrarBanner() {
+      document.getElementById('status-banner').style.display = 'none';
+    }
+
+    function cerrarModal() {
+      document.getElementById('save-modal').style.display = 'none';
+    }
+
+    loadData();
+  </script>
+</body>
+</html>

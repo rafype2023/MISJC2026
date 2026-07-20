@@ -25,8 +25,11 @@ cd "$(dirname "$0")"
 echo "albumes.json actualizado:"
 cat albumes.json
 
+echo ""
+echo "Preparando archivos (diario, imágenes y configuración)..."
 git add -A
+echo "Publicando en GitHub..."
 git commit -m "Actualizacion MisJC2026 $(date '+%Y-%m-%d %H:%M')"
 git push origin main
 echo ""
-echo "Listo! Render se actualizara en 1-2 minutos."
+echo "¡Listo! Tu sitio en Render se actualizará automáticamente en 1 o 2 minutos."

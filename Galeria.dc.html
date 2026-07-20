@@ -92,25 +92,19 @@
 </sc-if>
 <footer style="background:#10243E; color:#C9D6E6; padding:28px 40px; display:flex; justify-content:space-between; align-items:center; font-size:14px">
   <span style="font-family:'Archivo Black'; color:#fff">MisJC2026</span>
+  <sc-if value="{{ esLocal }}" hint-placeholder-val="{{ false }}">
+    <a href="editar.html" style="color:#9BCBEB; text-decoration:none; font-weight:600" style-hover="color:#fff">⚙️ Editar Sitio</a>
+  </sc-if>
   <span>Santo Domingo 2026 · Hecho con orgullo boricua 🇵🇷</span>
 </footer>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  // Pega aquí los links de Dropbox de cada foto (uno por foto). 'previa' = La previa, dia1..dia16.
-  fotosPorAlbum = {
-    previa: [
-      'https://www.dropbox.com/scl/fi/wi1thob8qu4rn6bo1tgno/IMG_2293.jpeg?rlkey=xlehllbjryewewk65gouzyn68&st=l48mo6bk&dl=0',
-      'https://www.dropbox.com/scl/fi/b1577p1tj920m19kbm0pw/IMG_2298.jpeg?rlkey=t1eucj81udw1nmibah15g1r9p&st=x2mx3gix&dl=0',
-      'https://www.dropbox.com/scl/fi/kt6kejkq734a8xcr8toj5/IMG_2297.jpeg?rlkey=ayn034ydyn0s0ya3m7n80i41j&st=d2grzqnx&dl=0',
-    ],
-    dia1: [], dia2: [], dia3: [], dia4: [], dia5: [], dia6: [], dia7: [], dia8: [],
-    dia9: [], dia10: [], dia11: [], dia12: [], dia13: [], dia14: [], dia15: [], dia16: [],
-  };
   directo(url) { return url.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('dl=0', 'raw=1'); }
-  state = { abierto: -1, foto: 0, manifiesto: {} };
+  state = { abierto: -1, foto: 0, manifiesto: {}, data: null };
   componentDidMount() {
     fetch('albumes.json').then(r => r.json()).then(m => this.setState({ manifiesto: m })).catch(() => {});
+    fetch('diario_data.json').then(r => r.json()).then(data => this.setState({ data })).catch(() => {});
     this.onKey = (e) => {
       if (this.state.abierto < 0) return;
       if (e.key === 'Escape') this.setState({ abierto: -1 });
@@ -131,15 +125,28 @@ class Component extends DCLogic {
       const d = new Date(2026, 6, 24 + i);
       lista.push({ tag: 'DÍA ' + (i + 1), fecha: d.getDate() + ' ' + meses[d.getMonth() - 6], titulo: 'Día ' + (i + 1), key: 'dia' + (i + 1), slotId: 'alb-dia-' + (i + 1) });
     }
+    const fotosPorAlbum = (this.state.data && this.state.data.dropbox_fotos) || {
+      previa: [
+        'https://www.dropbox.com/scl/fi/wi1thob8qu4rn6bo1tgno/IMG_2293.jpeg?rlkey=xlehllbjryewewk65gouzyn68&st=l48mo6bk&dl=0',
+        'https://www.dropbox.com/scl/fi/b1577p1tj920m19kbm0pw/IMG_2298.jpeg?rlkey=t1eucj81udw1nmibah15g1r9p&st=x2mx3gix&dl=0',
+        'https://www.dropbox.com/scl/fi/kt6kejkq734a8xcr8toj5/IMG_2297.jpeg?rlkey=ayn034ydyn0s0ya3m7n80i41j&st=d2grzqnx&dl=0'
+      ],
+      dia1: [], dia2: [], dia3: [], dia4: [], dia5: [], dia6: [], dia7: [], dia8: [],
+      dia9: [], dia10: [], dia11: [], dia12: [], dia13: [], dia14: [], dia15: [], dia16: []
+    };
     return lista.map(a => {
       const locales = (this.state.manifiesto[a.key] || []).map(f => 'fotos/' + a.key + '/' + encodeURIComponent(f));
-      const dropbox = (this.fotosPorAlbum[a.key] || []).map(u => this.directo(u));
+      const dropbox = (fotosPorAlbum[a.key] || []).map(u => this.directo(u));
       return { ...a, fotos: locales.concat(dropbox) };
     });
   }
   renderVals() {
     const lista = this.listaAlbums();
     const abierto = this.state.abierto >= 0 ? lista[this.state.abierto] : null;
+    const esLocal = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' || 
+                    window.location.protocol === 'file:';
+
     return {
       albums: lista.map((a, i) => ({
         ...a,
@@ -157,6 +164,7 @@ class Component extends DCLogic {
       visorPrev: () => this.mover(-1),
       visorNext: () => this.mover(1),
       cerrarVisor: () => this.setState({ abierto: -1 }),
+      esLocal
     };
   }
 }

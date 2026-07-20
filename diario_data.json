@@ -1,0 +1,81 @@
+{
+  "viaje": {
+    "fecha_inicio": "2026-07-24",
+    "fecha_fin": "2026-08-08",
+    "titulo": "MisJC2026",
+    "descripcion": "Santo Domingo 2026 · Hecho con orgullo boricua 🇵🇷"
+  },
+  "carrusel": [
+    { "src": "uploads/LOGO DETRAS.png", "alt": "Logo PUR" },
+    { "src": "uploads/brianna.png", "alt": "Brianna — Tenis de mesa, equipo femenino" },
+    { "src": "uploads/Adriana.png", "alt": "Adriana — Tenis de mesa, equipo femenino" },
+    { "src": "uploads/ChatGPT Image Jul 12, 2026 at 07_24_37 PM.png", "alt": "Natación — Puerto Rico" },
+    { "src": "uploads/ChatGPT Image Jul 12, 2026 at 07_24_45 PM.png", "alt": "Ramos, Atletismo — Puerto Rico" },
+    { "src": "uploads/ChatGPT Image Jul 12, 2026 at 07_25_31 PM.png", "alt": "Atletismo — Puerto Rico" },
+    { "src": "uploads/ChatGPT Image Jul 12, 2026 at 07_25_24 PM.png", "alt": "Baloncesto 3x3 — Puerto Rico" },
+    { "src": "uploads/ChatGPT Image Jul 12, 2026 at 07_25_14 PM.png", "alt": "Atletismo salto alto — Puerto Rico" }
+  ],
+  "previa": {
+    "fecha": "Sáb 18 jul",
+    "titulo": "Preparándonos: visita a la tienda #EquipoPUR",
+    "nota": "Días antes del viaje fuimos a la tienda Olímpica a ver qué comprábamos para apoyar a los nuestros: camisas PUR, el jersey Joma oficial, pines de Santo Domingo 2026 y lanyards de Puerto Rico. ¡Ya se siente el ambiente de los Juegos!",
+    "fotos": [
+      "uploads/IMG_2296.jpeg",
+      "uploads/IMG_2292.jpeg",
+      "uploads/IMG_7618.jpeg",
+      "uploads/IMG_7619.jpeg",
+      "uploads/IMG_2298.jpeg",
+      "uploads/IMG_2291.jpeg"
+    ]
+  },
+  "diario": [
+    { "num": 1, "fecha": "Vie 24 jul", "titulo": "¡Llegamos a Santo Domingo!", "nota": "Aquí escribiré mi nota del día 1: qué eventos vi, cómo le fue a Puerto Rico y lo mejor de la jornada." },
+    { "num": 2, "fecha": "Sáb 25 jul", "titulo": "", "nota": "" },
+    { "num": 3, "fecha": "Dom 26 jul", "titulo": "", "nota": "" },
+    { "num": 4, "fecha": "Lun 27 jul", "titulo": "", "nota": "" },
+    { "num": 5, "fecha": "Mar 28 jul", "titulo": "", "nota": "" },
+    { "num": 6, "fecha": "Mié 29 jul", "titulo": "", "nota": "" },
+    { "num": 7, "fecha": "Jue 30 jul", "titulo": "", "nota": "" },
+    { "num": 8, "fecha": "Vie 31 jul", "titulo": "", "nota": "" },
+    { "num": 9, "fecha": "Sáb 1 ago", "titulo": "", "nota": "" },
+    { "num": 10, "fecha": "Dom 2 ago", "titulo": "", "nota": "" },
+    { "num": 11, "fecha": "Lun 3 ago", "titulo": "", "nota": "" },
+    { "num": 12, "fecha": "Mar 4 ago", "titulo": "", "nota": "" },
+    { "num": 13, "fecha": "Mié 5 ago", "titulo": "", "nota": "" },
+    { "num": 14, "fecha": "Jue 6 ago", "titulo": "", "nota": "" },
+    { "num": 15, "fecha": "Vie 7 ago", "titulo": "", "nota": "" },
+    { "num": 16, "fecha": "Sáb 8 ago", "titulo": "Clausura y despedida", "nota": "Aquí escribiré mi nota del día 16: qué eventos vi, cómo le fue a Puerto Rico y lo mejor de la jornada." }
+  ],
+  "dropbox_fotos": {
+    "previa": [
+      "https://www.dropbox.com/scl/fi/wi1thob8qu4rn6bo1tgno/IMG_2293.jpeg?rlkey=xlehllbjryewewk65gouzyn68&st=l48mo6bk&dl=0",
+      "https://www.dropbox.com/scl/fi/b1577p1tj920m19kbm0pw/IMG_2298.jpeg?rlkey=t1eucj81udw1nmibah15g1r9p&st=x2mx3gix&dl=0",
+      "https://www.dropbox.com/scl/fi/kt6kejkq734a8xcr8toj5/IMG_2297.jpeg?rlkey=ayn034ydyn0s0ya3m7n80i41j&st=d2grzqnx&dl=0"
+    ],
+    "dia1": [], "dia2": [], "dia3": [], "dia4": [], "dia5": [], "dia6": [], "dia7": [], "dia8": [],
+    "dia9": [], "dia10": [], "dia11": [], "dia12": [], "dia13": [], "dia14": [], "dia15": [], "dia16": []
+  },
+  "videos": [
+    { "tag": "La previa", "titulo": "Motivando a nuestros atletas", "url": "https://youtu.be/MIoTRMZ5bZw" },
+    { "tag": "Próximamente", "titulo": "Ceremonia inaugural", "url": "" },
+    { "tag": "Próximamente", "titulo": "Puerto Rico en acción", "url": "" },
+    { "tag": "Próximamente", "titulo": "Recorriendo Santo Domingo", "url": "" },
+    { "tag": "Próximamente", "titulo": "Lo mejor del viaje", "url": "" }
+  ],
+  "documentos": [
+    {
+      "tipo": "PDF",
+      "titulo": "Reporte de Atletas PUR — Santo Domingo 2026",
+      "descripcion": "Calendario de los días en que participan nuestros atletas.",
+      "url": "uploads/Reporte_Atletas_PUR_Santo_Domingo_2026-2.pdf",
+      "color": "#E03C31"
+    },
+    {
+      "tipo": "PDF",
+      "titulo": "Reporte de Equipos PUR y Rivales — Santo Domingo 2026",
+      "descripcion": "Equipos de Puerto Rico y sus rivales en los Juegos.",
+      "url": "uploads/Reporte_Equipos_PUR_Rivales_Santo_Domingo_2026.pdf",
+      "color": "#0B4EA2"
+    }
+  ]
+}

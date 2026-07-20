@@ -48,18 +48,15 @@
     <div style="background:#9BCBEB; color:#10243E; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; padding:18px 8px">
       <span style="font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase">La</span>
       <span style="font-family:'Archivo Black'; font-size:26px; line-height:1.1; text-align:center">Previa</span>
-      <span style="font-size:12px; font-weight:600; text-align:center">Sáb 18 jul</span>
+      <span style="font-size:12px; font-weight:600; text-align:center">{{ previaFecha }}</span>
     </div>
     <div style="padding:22px 26px; display:flex; flex-direction:column; gap:12px">
-      <h2 style="font-family:'Archivo Black'; font-size:21px; margin:0">Preparándonos: visita a la tienda #EquipoPUR</h2>
-      <p style="margin:0; line-height:1.6; color:#3A4A5E">Días antes del viaje fuimos a la tienda Olímpica a ver qué comprábamos para apoyar a los nuestros: camisas PUR, el jersey Joma oficial, pines de Santo Domingo 2026 y lanyards de Puerto Rico. ¡Ya se siente el ambiente de los Juegos!</p>
+      <h2 style="font-family:'Archivo Black'; font-size:21px; margin:0">{{ previaTitulo }}</h2>
+      <p style="margin:0; line-height:1.6; color:#3A4A5E">{{ previaNota }}</p>
       <div style="display:grid; grid-template-columns:repeat(3,1fr); grid-auto-rows:180px; gap:10px">
-        <img src="uploads/IMG_2296.jpeg" alt="Camisa azul PUR" style="width:100%; height:180px; object-fit:cover; border-radius:8px; display:block">
-        <img src="uploads/IMG_2292.jpeg" alt="Jersey Joma oficial de Puerto Rico" style="width:100%; height:180px; object-fit:cover; border-radius:8px; display:block">
-        <img src="uploads/IMG_7618.jpeg" alt="Pines de Santo Domingo 2026" style="width:100%; height:180px; object-fit:cover; border-radius:8px; display:block">
-        <img src="uploads/IMG_7619.jpeg" alt="Lanyards de Puerto Rico" style="width:100%; height:180px; object-fit:cover; border-radius:8px; display:block">
-        <img src="uploads/IMG_2298.jpeg" alt="Lanyard rojo y azul de Puerto Rico" style="width:100%; height:180px; object-fit:cover; border-radius:8px; display:block">
-        <img src="uploads/IMG_2291.jpeg" alt="Lista de precios de la tienda #EquipoPUR" style="width:100%; height:180px; object-fit:cover; border-radius:8px; display:block">
+        <sc-for list="{{ previaFotos }}" as="foto" hint-placeholder-count="3">
+          <img src="{{ foto.src }}" alt="Foto previa" style="width:100%; height:180px; object-fit:cover; border-radius:8px; display:block">
+        </sc-for>
       </div>
     </div>
   </article>
@@ -82,26 +79,78 @@
 </main>
 <footer style="background:#10243E; color:#C9D6E6; padding:28px 40px; display:flex; justify-content:space-between; align-items:center; font-size:14px">
   <span style="font-family:'Archivo Black'; color:#fff">MisJC2026</span>
+  <sc-if value="{{ esLocal }}" hint-placeholder-val="{{ false }}">
+    <a href="editar.html" style="color:#9BCBEB; text-decoration:none; font-weight:600" style-hover="color:#fff">⚙️ Editar Sitio</a>
+  </sc-if>
   <span>Santo Domingo 2026 · Hecho con orgullo boricua 🇵🇷</span>
 </footer>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
+  state = { data: null };
+  componentDidMount() {
+    fetch('diario_data.json')
+      .then(r => r.json())
+      .then(data => this.setState({ data }))
+      .catch(err => console.error('Error al cargar diario_data.json:', err));
+  }
   renderVals() {
-    const fechas = ['Vie 24 jul','Sáb 25 jul','Dom 26 jul','Lun 27 jul','Mar 28 jul','Mié 29 jul','Jue 30 jul','Vie 31 jul','Sáb 1 ago','Dom 2 ago','Lun 3 ago','Mar 4 ago','Mié 5 ago','Jue 6 ago','Vie 7 ago','Sáb 8 ago'];
-    const titulos = { 1: '¡Llegamos a Santo Domingo!', 16: 'Clausura y despedida' };
-    const dias = fechas.map((fecha, i) => {
-      const num = i + 1;
-      return {
-        num, fecha,
-        titulo: titulos[num] || 'Título de la entrada del día ' + num,
-        nota: 'Aquí escribiré mi nota del día ' + num + ': qué eventos vi, cómo le fue a Puerto Rico y lo mejor de la jornada.',
-        slotId: 'dia-' + num,
-        badgeBg: num % 2 === 1 ? '#E03C31' : '#0B4EA2',
-        badgeFg: '#ffffff',
-      };
-    });
-    return { dias };
+    const defaultFechas = ['Vie 24 jul','Sáb 25 jul','Dom 26 jul','Lun 27 jul','Mar 28 jul','Mié 29 jul','Jue 30 jul','Vie 31 jul','Sáb 1 ago','Dom 2 ago','Lun 3 ago','Mar 4 ago','Mié 5 ago','Jue 6 ago','Vie 7 ago','Sáb 8 ago'];
+    const defaultTitulos = { 1: '¡Llegamos a Santo Domingo!', 16: 'Clausura y despedida' };
+
+    let dias = [];
+    let previaFecha = 'Sáb 18 jul';
+    let previaTitulo = 'Preparándonos: visita a la tienda #EquipoPUR';
+    let previaNota = 'Días antes del viaje fuimos a la tienda Olímpica a ver qué comprábamos para apoyar a los nuestros: camisas PUR, el jersey Joma oficial, pines de Santo Domingo 2026 y lanyards de Puerto Rico. ¡Ya se siente el ambiente de los Juegos!';
+    let previaFotos = [
+      { src: 'uploads/IMG_2296.jpeg' },
+      { src: 'uploads/IMG_2292.jpeg' },
+      { src: 'uploads/IMG_7618.jpeg' },
+      { src: 'uploads/IMG_7619.jpeg' },
+      { src: 'uploads/IMG_2298.jpeg' },
+      { src: 'uploads/IMG_2291.jpeg' }
+    ];
+
+    if (this.state.data) {
+      if (this.state.data.previa) {
+        const p = this.state.data.previa;
+        previaFecha = p.fecha;
+        previaTitulo = p.titulo;
+        previaNota = p.nota;
+        previaFotos = (p.fotos || []).map(f => ({ src: f }));
+      }
+      dias = (this.state.data.diario || []).map(d => ({
+        num: d.num,
+        fecha: d.fecha,
+        titulo: d.titulo || 'Título de la entrada del día ' + d.num,
+        nota: d.nota || 'Aquí escribiré mi nota del día ' + d.num + ': qué eventos vi, cómo le fue a Puerto Rico y lo mejor de la jornada.',
+        slotId: 'dia-' + d.num,
+        badgeBg: d.num % 2 === 1 ? '#E03C31' : '#0B4EA2',
+        badgeFg: '#ffffff'
+      }));
+    } else {
+      dias = defaultFechas.map((fecha, i) => {
+        const num = i + 1;
+        return {
+          num, fecha,
+          titulo: defaultTitulos[num] || 'Título de la entrada del día ' + num,
+          nota: 'Aquí escribiré mi nota del día ' + num + ': qué eventos vi, cómo le fue a Puerto Rico y lo mejor de la jornada.',
+          slotId: 'dia-' + num,
+          badgeBg: num % 2 === 1 ? '#E03C31' : '#0B4EA2',
+          badgeFg: '#ffffff'
+        };
+      });
+    }
+
+    const esLocal = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' || 
+                    window.location.protocol === 'file:';
+
+    return {
+      dias,
+      previaFecha, previaTitulo, previaNota, previaFotos,
+      esLocal
+    };
   }
 }
 </script>
