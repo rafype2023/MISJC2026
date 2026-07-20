@@ -1,0 +1,13 @@
+Crea una carpeta por dia y pon las fotos adentro:
+
+  fotos/previa/   -> La previa
+  fotos/dia1/     -> Dia 1 (24 jul)
+  fotos/dia2/     -> Dia 2 (25 jul)
+  ...
+  fotos/dia16/    -> Dia 16 (8 ago)
+
+Formatos que funcionan: JPG, PNG, WEBP, GIF.
+OJO: las fotos de iPhone en formato HEIC no se ven en la web —
+al exportarlas de Fotos usa "Exportar" (las convierte a JPG automaticamente).
+
+Despues de poner las fotos, doble clic a actualizar.command y listo.

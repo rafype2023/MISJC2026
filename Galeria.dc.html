@@ -47,17 +47,24 @@
   <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px">
     <sc-for list="{{ albums }}" as="al" hint-placeholder-count="6">
       <div style="background:#fff; border:1px solid #E4E1DA; border-radius:12px; overflow:hidden; display:flex; flex-direction:column; opacity:{{ al.opacity }}">
-        <div style="height:180px"><image-slot id="{{ al.slotId }}" shape="rect" placeholder="Portada del álbum"></image-slot></div>
+        <div style="height:180px; position:relative">
+          <sc-if value="{{ al.hasFotos }}" hint-placeholder-val="{{ false }}">
+            <img src="{{ al.portada }}" alt="Portada {{ al.titulo }}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover">
+          </sc-if>
+          <sc-if value="{{ al.noFotos }}" hint-placeholder-val="{{ true }}">
+            <image-slot id="{{ al.slotId }}" shape="rect" placeholder="Portada del álbum"></image-slot>
+          </sc-if>
+        </div>
         <div style="padding:16px 18px 18px; display:flex; flex-direction:column; gap:6px">
           <div style="display:flex; align-items:center; gap:8px">
             <span style="background:#9BCBEB; color:#10243E; font-weight:700; font-size:11px; padding:3px 8px; border-radius:4px; letter-spacing:1px">{{ al.tag }}</span>
             <span style="color:#5A6B80; font-size:13px; font-weight:600">{{ al.fecha }}</span>
           </div>
           <div style="font-family:'Archivo Black'; font-size:18px">{{ al.titulo }}</div>
-          <sc-if value="{{ al.hasLink }}" hint-placeholder-val="{{ false }}">
-            <a href="{{ al.url }}" target="_blank" rel="noopener" style="font-weight:700; font-size:14px; text-decoration:none; margin-top:4px">Ver álbum en Dropbox →</a>
+          <sc-if value="{{ al.hasFotos }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ al.abrir }}" style="align-self:flex-start; margin-top:4px; background:#E03C31; color:#fff; border:0; border-radius:6px; font-weight:700; font-size:14px; padding:9px 16px; cursor:pointer; font-family:'Archivo',sans-serif" style-hover="background:#c22f26">Ver fotos ({{ al.total }}) →</button>
           </sc-if>
-          <sc-if value="{{ al.noLink }}" hint-placeholder-val="{{ true }}">
+          <sc-if value="{{ al.noFotos }}" hint-placeholder-val="{{ true }}">
             <span style="color:#5A6B80; font-size:13px; font-style:italic; margin-top:4px">Álbum disponible pronto</span>
           </sc-if>
         </div>
@@ -66,6 +73,23 @@
   </div>
   <p style="text-align:center; color:#5A6B80; font-size:14px; margin-top:28px">Cuando tengas el link de Dropbox de un día, pásamelo y lo activo. Arrastra una foto sobre cada tarjeta como portada.</p>
 </main>
+<sc-if value="{{ visorAbierto }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed; inset:0; background:rgba(8,16,28,0.96); z-index:100; display:flex; flex-direction:column">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 24px; color:#fff">
+      <div style="display:flex; align-items:baseline; gap:12px">
+        <span style="font-family:'Archivo Black'; font-size:18px">{{ visorTitulo }}</span>
+        <span style="color:#9BCBEB; font-size:14px; font-weight:600">{{ visorContador }}</span>
+      </div>
+      <button onClick="{{ cerrarVisor }}" aria-label="Cerrar" style="background:none; border:2px solid #9BCBEB; color:#9BCBEB; width:38px; height:38px; border-radius:50%; font-size:18px; cursor:pointer" style-hover="border-color:#fff; color:#fff">✕</button>
+    </div>
+    <div style="flex:1; position:relative; min-height:0">
+      <img src="{{ visorSrc }}" alt="{{ visorTitulo }}" style="position:absolute; inset:2%; width:96%; height:96%; object-fit:contain">
+      <button onClick="{{ visorPrev }}" aria-label="Anterior" style="position:absolute; left:18px; top:50%; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; border:0; background:#0B4EA2; color:#fff; font-size:24px; cursor:pointer" style-hover="background:#E03C31">‹</button>
+      <button onClick="{{ visorNext }}" aria-label="Siguiente" style="position:absolute; right:18px; top:50%; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; border:0; background:#0B4EA2; color:#fff; font-size:24px; cursor:pointer" style-hover="background:#E03C31">›</button>
+    </div>
+    <div style="height:24px"></div>
+  </div>
+</sc-if>
 <footer style="background:#10243E; color:#C9D6E6; padding:28px 40px; display:flex; justify-content:space-between; align-items:center; font-size:14px">
   <span style="font-family:'Archivo Black'; color:#fff">MisJC2026</span>
   <span>Santo Domingo 2026 · Hecho con orgullo boricua 🇵🇷</span>
@@ -73,23 +97,67 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  renderVals() {
-    // Pega aquí el link de Dropbox de cada día cuando lo tengas
-    const urlPrevia = 'https://www.dropbox.com/scl/fo/oi500gb4srmpeux0xcko9/AN9ER28NTjDXFgC7f7GpYeI?rlkey=hlxqp4wo0o28ezx2ignzc6204&st=z6yrb5p4&dl=0';
-    const dias = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']; // Día 1..16
+  // Pega aquí los links de Dropbox de cada foto (uno por foto). 'previa' = La previa, dia1..dia16.
+  fotosPorAlbum = {
+    previa: [
+      'https://www.dropbox.com/scl/fi/wi1thob8qu4rn6bo1tgno/IMG_2293.jpeg?rlkey=xlehllbjryewewk65gouzyn68&st=l48mo6bk&dl=0',
+      'https://www.dropbox.com/scl/fi/b1577p1tj920m19kbm0pw/IMG_2298.jpeg?rlkey=t1eucj81udw1nmibah15g1r9p&st=x2mx3gix&dl=0',
+      'https://www.dropbox.com/scl/fi/kt6kejkq734a8xcr8toj5/IMG_2297.jpeg?rlkey=ayn034ydyn0s0ya3m7n80i41j&st=d2grzqnx&dl=0',
+    ],
+    dia1: [], dia2: [], dia3: [], dia4: [], dia5: [], dia6: [], dia7: [], dia8: [],
+    dia9: [], dia10: [], dia11: [], dia12: [], dia13: [], dia14: [], dia15: [], dia16: [],
+  };
+  directo(url) { return url.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('dl=0', 'raw=1'); }
+  state = { abierto: -1, foto: 0, manifiesto: {} };
+  componentDidMount() {
+    fetch('albumes.json').then(r => r.json()).then(m => this.setState({ manifiesto: m })).catch(() => {});
+    this.onKey = (e) => {
+      if (this.state.abierto < 0) return;
+      if (e.key === 'Escape') this.setState({ abierto: -1 });
+      if (e.key === 'ArrowLeft') this.mover(-1);
+      if (e.key === 'ArrowRight') this.mover(1);
+    };
+    window.addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() { window.removeEventListener('keydown', this.onKey); }
+  mover(d) {
+    const fotos = this.listaAlbums()[this.state.abierto].fotos;
+    this.setState(s => ({ foto: (s.foto + d + fotos.length) % fotos.length }));
+  }
+  listaAlbums() {
     const meses = ['jul', 'ago'];
-    const lista = [{ tag: 'LA PREVIA', fecha: 'Antes del viaje', titulo: 'La previa', url: urlPrevia, slotId: 'alb-previa' }];
+    const lista = [{ tag: 'LA PREVIA', fecha: 'Antes del viaje', titulo: 'La previa', key: 'previa', slotId: 'alb-previa' }];
     for (let i = 0; i < 16; i++) {
       const d = new Date(2026, 6, 24 + i);
-      lista.push({
-        tag: 'DÍA ' + (i + 1),
-        fecha: d.getDate() + ' ' + meses[d.getMonth() - 6],
-        titulo: 'Día ' + (i + 1),
-        url: dias[i],
-        slotId: 'alb-dia-' + (i + 1),
-      });
+      lista.push({ tag: 'DÍA ' + (i + 1), fecha: d.getDate() + ' ' + meses[d.getMonth() - 6], titulo: 'Día ' + (i + 1), key: 'dia' + (i + 1), slotId: 'alb-dia-' + (i + 1) });
     }
-    return { albums: lista.map(a => ({ ...a, hasLink: !!a.url, noLink: !a.url, opacity: a.url ? 1 : 0.65 })) };
+    return lista.map(a => {
+      const locales = (this.state.manifiesto[a.key] || []).map(f => 'fotos/' + a.key + '/' + encodeURIComponent(f));
+      const dropbox = (this.fotosPorAlbum[a.key] || []).map(u => this.directo(u));
+      return { ...a, fotos: locales.concat(dropbox) };
+    });
+  }
+  renderVals() {
+    const lista = this.listaAlbums();
+    const abierto = this.state.abierto >= 0 ? lista[this.state.abierto] : null;
+    return {
+      albums: lista.map((a, i) => ({
+        ...a,
+        total: a.fotos.length,
+        portada: a.fotos[0] || '',
+        hasFotos: a.fotos.length > 0,
+        noFotos: a.fotos.length === 0,
+        opacity: a.fotos.length ? 1 : 0.65,
+        abrir: () => this.setState({ abierto: i, foto: 0 }),
+      })),
+      visorAbierto: !!abierto,
+      visorTitulo: abierto ? abierto.titulo : '',
+      visorContador: abierto ? (this.state.foto + 1) + ' / ' + abierto.fotos.length : '',
+      visorSrc: abierto ? abierto.fotos[this.state.foto] : '',
+      visorPrev: () => this.mover(-1),
+      visorNext: () => this.mover(1),
+      cerrarVisor: () => this.setState({ abierto: -1 }),
+    };
   }
 }
 </script>
