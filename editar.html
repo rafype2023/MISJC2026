@@ -636,7 +636,7 @@
     // Load initial JSON
     async function loadData() {
       try {
-        const response = await fetch('diario_data.json');
+        const response = await fetch('diario_data.json?t=' + Date.now());
         db = await response.json();
         inicializarUI();
       } catch (err) {

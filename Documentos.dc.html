@@ -67,7 +67,7 @@
 class Component extends DCLogic {
   state = { data: null };
   componentDidMount() {
-    fetch('diario_data.json')
+    fetch('diario_data.json?t=' + Date.now())
       .then(r => r.json())
       .then(data => this.setState({ data }))
       .catch(err => console.error('Error al cargar diario_data.json:', err));
