@@ -7,6 +7,22 @@
   },
   "carrusel": [
     {
+      "src": "uploads/carrusel_foto1.png",
+      "alt": "Hobie 16 — Equipo Mixto"
+    },
+    {
+      "src": "uploads/carrusel_foto2.png",
+      "alt": "Karate — Equipo Femenino"
+    },
+    {
+      "src": "uploads/carrusel_foto3.jpg",
+      "alt": "Boxeo — Equipo Femenino"
+    },
+    {
+      "src": "uploads/carrusel_foto4.jpg",
+      "alt": "Judo — Equipo Femenino"
+    },
+    {
       "src": "uploads/LOGO DETRAS.png",
       "alt": "Logo PUR"
     },
