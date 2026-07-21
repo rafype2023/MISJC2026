@@ -54,6 +54,12 @@
   },
   "diario": [
     {
+      "num": 0,
+      "fecha": "Jue 23 jul",
+      "titulo": "Viaje y llegada a la Villa",
+      "nota": "Aquí escribiré mi nota del día 0: el vuelo desde San Juan, la llegada a Santo Domingo y los primeros encuentros en la Villa Centroamericana."
+    },
+    {
       "num": 1,
       "fecha": "Vie 24 jul",
       "titulo": "¡Llegamos a Santo Domingo!",
@@ -157,6 +163,7 @@
       "https://www.dropbox.com/scl/fi/kt6kejkq734a8xcr8toj5/IMG_2297.jpeg?rlkey=ayn034ydyn0s0ya3m7n80i41j&st=d2grzqnx&dl=0",
       "https://www.dropbox.com/scl/fi/td4104i12p4ty77bx1ce1/IMG_7620.jpeg?rlkey=ptf0mk2g07twmvlwhgnllo7ke&st=ij28g0ek&dl=0"
     ],
+    "dia0": [],
     "dia1": [
       "https://www.dropbox.com/scl/fi/t7pw2jcushqagui5466ro/IMG_7621.jpeg?rlkey=gmmdh3zht4ijpt0pmkpdlr1zo&st=33ycgyuf&dl=0"
     ],
@@ -217,6 +224,99 @@
       "descripcion": "Equipos de Puerto Rico y sus rivales en los Juegos.",
       "url": "uploads/Reporte_Equipos_PUR_Rivales_Santo_Domingo_2026.pdf",
       "color": "#0B4EA2"
+    }
+  ],
+  "agenda": [
+    {
+      "fecha": "Vie 24 jul",
+      "hora": "09:00",
+      "deporte": "Tiro con arco",
+      "atletas": "Jean Pizarro, Paola Ramírez",
+      "evento": "Clasificación Recurvo/Compuesto"
+    },
+    {
+      "fecha": "Vie 24 jul",
+      "hora": "09:00",
+      "deporte": "Tenis",
+      "atletas": "Marko Mesarovic, Daniella O'Neill",
+      "evento": "Primeras rondas"
+    },
+    {
+      "fecha": "Vie 24 jul",
+      "hora": "20:00",
+      "deporte": "Ceremonia",
+      "atletas": "Delegación PUR",
+      "evento": "Ceremonia de Inauguración 🇵🇷"
+    },
+    {
+      "fecha": "Sáb 25 jul",
+      "hora": "10:30",
+      "deporte": "Judo",
+      "atletas": "Analeanis Collazo (-48kg), Francine Echevarría (-52kg)",
+      "evento": "Medallas"
+    },
+    {
+      "fecha": "Sáb 25 jul",
+      "hora": "10:30",
+      "deporte": "Judo",
+      "atletas": "Adiel Carrión (-60kg)",
+      "evento": "Medallas"
+    },
+    {
+      "fecha": "Sáb 25 jul",
+      "hora": "09:30",
+      "deporte": "Taekwondo",
+      "atletas": "Arelis Medina, Luis G. Colón",
+      "evento": "Poomsae"
+    },
+    {
+      "fecha": "Sáb 25 jul",
+      "hora": "10:45",
+      "deporte": "Remo",
+      "atletas": "Kevin Harvell",
+      "evento": "Single scull"
+    },
+    {
+      "fecha": "Dom 26 jul",
+      "hora": "10:30",
+      "deporte": "Judo",
+      "atletas": "Adrián Gandía (-81kg)",
+      "evento": "Medallas"
+    },
+    {
+      "fecha": "Dom 26 jul",
+      "hora": "14:45",
+      "deporte": "Tiro",
+      "atletas": "Bermúdez, Pizarro, Medero",
+      "evento": "Finales de Skeet"
+    },
+    {
+      "fecha": "Lun 27 jul",
+      "hora": "10:30",
+      "deporte": "Judo",
+      "atletas": "Sairy Colón (-78kg), Derik Rodríguez (-90kg)",
+      "evento": "Medallas"
+    },
+    {
+      "fecha": "Lun 27 jul",
+      "hora": "09:00",
+      "deporte": "Boliche",
+      "atletas": "Cristian Azcona, Raúl Colón",
+      "evento": "Individual"
+    },
+    {
+      "fecha": "Mar 28 jul",
+      "hora": "10:30",
+      "deporte": "Judo",
+      "atletas": "Equipo Mixto PUR",
+      "evento": "Medallas por Equipos"
+    },
+    {
+      "fecha": "Mar 28 jul",
+      "hora": "09:00",
+      "deporte": "Natación",
+      "atletas": "Kristen Romano",
+      "evento": "200m Combinado"
     }
   ]
 }

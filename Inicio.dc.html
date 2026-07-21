@@ -14,6 +14,76 @@
 <style>
   body { margin:0; background:#FBFAF8; color:#10243E; font-family:'Archivo',sans-serif; }
   a { color:#0B4EA2; } a:hover { color:#E03C31; }
+
+  /* Ticker styles */
+  .ticker-wrap {
+    width: 100%;
+    overflow: hidden;
+    height: 40px;
+    background-color: #10243E;
+    border-bottom: 2px solid #E03C31;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+  }
+  .ticker-title {
+    background: #E03C31;
+    color: #fff;
+    padding: 0 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    z-index: 10;
+    flex-shrink: 0;
+    font-family: 'Archivo Black', sans-serif;
+    position: relative;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.3);
+  }
+  .ticker-pulse {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    margin-right: 8px;
+    animation: pulse 1.2s infinite;
+  }
+  @keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.5; }
+    50% { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.5; }
+  }
+  .ticker-content {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 35s linear infinite;
+  }
+  .ticker-content:hover {
+    animation-play-state: paused;
+  }
+  .ticker-item {
+    display: inline-block;
+    padding: 0 24px;
+    font-size: 14px;
+    color: #fff;
+    font-weight: 600;
+  }
+  .ticker-item strong {
+    color: #9BCBEB;
+  }
+  .ticker-item span.hora {
+    color: #ff6b6b;
+    font-family: monospace;
+    font-weight: 700;
+    margin-left: 4px;
+  }
+  @keyframes marquee {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-50%, 0, 0); }
+  }
 </style>
 </helmet>
 <nav style="display:flex; align-items:center; gap:28px; padding:16px 40px; background:#0B4EA2; color:#fff; position:sticky; top:0; z-index:50">
@@ -29,6 +99,23 @@
     <a href="Documentos.dc.html" style="color:#fff; text-decoration:none" style-hover="color:#9BCBEB">Documentos</a>
   </div>
 </nav>
+<div class="ticker-wrap">
+  <div class="ticker-title">
+    <span class="ticker-pulse"></span>AGENDA PUR
+  </div>
+  <div class="ticker-content">
+    <sc-for list="{{ agendaItems }}" as="ev">
+      <div class="ticker-item">
+        🇵🇷 <strong>{{ ev.fecha }}</strong> <span class="hora">{{ ev.hora }}</span> — {{ ev.deporte }}: {{ ev.atletas }} <em>({{ ev.evento }})</em>
+      </div>
+    </sc-for>
+    <sc-for list="{{ agendaItems }}" as="ev">
+      <div class="ticker-item">
+        🇵🇷 <strong>{{ ev.fecha }}</strong> <span class="hora">{{ ev.hora }}</span> — {{ ev.deporte }}: {{ ev.atletas }} <em>({{ ev.evento }})</em>
+      </div>
+    </sc-for>
+  </div>
+</div>
 <header style="position:relative; background:#10243E; color:#fff; overflow:hidden">
   <div style="display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr); gap:0; min-height:520px">
     <div style="padding:64px 48px 64px 40px; display:flex; flex-direction:column; justify-content:center; gap:18px">
@@ -139,6 +226,16 @@ class Component extends DCLogic {
     return url.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('dl=0', 'raw=1');
   }
   renderVals() {
+    const defaultAgenda = [
+      { fecha: "Vie 24 jul", hora: "09:00", deporte: "Tiro con arco", atletas: "Jean Pizarro, Paola Ramírez", evento: "Clasificación Recurvo/Compuesto" },
+      { fecha: "Vie 24 jul", hora: "09:00", deporte: "Tenis", atletas: "Marko Mesarovic, Daniella O'Neill", evento: "Primeras rondas" },
+      { fecha: "Vie 24 jul", hora: "20:00", deporte: "Ceremonia", atletas: "Delegación PUR", evento: "Ceremonia de Inauguración 🇵🇷" },
+      { fecha: "Sáb 25 jul", hora: "10:30", deporte: "Judo", atletas: "Analeanis Collazo (-48kg), Francine Echevarría (-52kg)", evento: "Medallas" },
+      { fecha: "Sáb 25 jul", hora: "10:30", deporte: "Judo", atletas: "Adiel Carrión (-60kg)", evento: "Medallas" },
+      { fecha: "Sáb 25 jul", hora: "09:30", deporte: "Taekwondo", atletas: "Arelis Medina, Luis G. Colón", evento: "Poomsae" },
+      { fecha: "Sáb 25 jul", hora: "10:45", deporte: "Remo", atletas: "Kevin Harvell", evento: "Single scull" }
+    ];
+
     const start = new Date(2026, 6, 24);
     const end = new Date(2026, 7, 8);
     const now = new Date();
@@ -166,8 +263,10 @@ class Component extends DCLogic {
     let ultNota = 'Fuimos a la tienda Olímpica a ver qué comprábamos para el viaje: camisas PUR, el jersey Joma oficial, pines de Santo Domingo 2026 y lanyards de Puerto Rico. ¡Ya se siente el ambiente!';
     let ultFoto = 'uploads/IMG_2296.jpeg';
     let ultSlotId = 'dia-previa';
+    let agendaItems = defaultAgenda;
 
     if (this.state.data) {
+      agendaItems = this.state.data.agenda || defaultAgenda;
       const diario = this.state.data.diario || [];
       const fotosPorAlbum = this.state.data.dropbox_fotos || {};
       let lastDay = null;
@@ -216,6 +315,7 @@ class Component extends DCLogic {
         go: () => this.goTo(i, true),
       })),
       ultTag, ultFecha, ultTitulo, ultNota, ultFoto, ultSlotId,
+      agendaItems,
       esLocal
     };
   }

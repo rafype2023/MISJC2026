@@ -451,6 +451,7 @@
       <button id="tab-videos" class="tab-btn" onclick="switchTab('videos')">🎬 Videos</button>
       <button id="tab-documentos" class="tab-btn" onclick="switchTab('documentos')">📄 Documentos</button>
       <button id="tab-carrusel" class="tab-btn" onclick="switchTab('carrusel')">🎠 Carrusel de Inicio</button>
+      <button id="tab-agenda" class="tab-btn" onclick="switchTab('agenda')">📅 Agenda de Eventos</button>
       <div class="sidebar-title" style="margin-top: 16px;">Configuración</div>
       <button id="tab-github" class="tab-btn" onclick="switchTab('github')">⚙️ Conexión GitHub</button>
     </div>
@@ -560,6 +561,21 @@
         </div>
       </div>
 
+      <!-- Tab: Agenda -->
+      <div id="panel-agenda" class="tab-content" style="display: none;">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Calendario de Eventos (Ticker)</h2>
+            <p class="panel-desc">Administra los eventos de los atletas de Puerto Rico que se muestran en el ticker de la portada.</p>
+          </div>
+          <button onclick="agregarAgenda()" class="btn btn-secondary">➕ Añadir Evento</button>
+        </div>
+
+        <div class="card-list" id="agenda-card-list">
+          <!-- Dynamically populated agenda -->
+        </div>
+      </div>
+
       <!-- Tab: GitHub Conexión -->
       <div id="panel-github" class="tab-content" style="display: none;">
         <div class="panel-header">
@@ -645,10 +661,11 @@
           viaje: { fecha_inicio: "2026-07-24", fecha_fin: "2026-08-08", titulo: "MisJC2026", descripcion: "Santo Domingo 2026 · Hecho con orgullo boricua" },
           carrusel: [],
           previa: { fecha: "Sáb 18 jul", titulo: "", nota: "", fotos: [] },
-          diario: Array.from({length: 16}, (_, i) => ({ num: i + 1, fecha: "", titulo: "", nota: "" })),
-          dropbox_fotos: { previa: [] },
+          diario: [{ num: 0, fecha: "Jue 23 jul", titulo: "", nota: "" }, ...Array.from({length: 16}, (_, i) => ({ num: i + 1, fecha: "", titulo: "", nota: "" }))],
+          dropbox_fotos: { previa: [], dia0: [] },
           videos: [],
-          documentos: []
+          documentos: [],
+          agenda: []
         };
         for(let i=1; i<=16; i++) {
           db.dropbox_fotos['dia' + i] = [];
@@ -669,6 +686,7 @@
       renderVideos();
       renderDocumentos();
       renderCarrusel();
+      renderAgenda();
     }
 
     function onTokenChange() {
@@ -772,6 +790,15 @@
       btnPrevia.textContent = `Previa (${prevCount})`;
       btnPrevia.onclick = () => { selectGaleriaDay('previa'); };
       container.appendChild(btnPrevia);
+
+      // Day 0
+      const btnDia0 = document.createElement('button');
+      btnDia0.className = `day-selector-btn ${activeGaleriaDay === 'dia0' ? 'active' : ''}`;
+      const count0 = (db.dropbox_fotos.dia0 || []).length;
+      if (count0 > 0) btnDia0.classList.add('has-content');
+      btnDia0.textContent = `Día 0 (${count0})`;
+      btnDia0.onclick = () => { selectGaleriaDay('dia0'); };
+      container.appendChild(btnDia0);
 
       // Days 1 to 16
       for (let i = 1; i <= 16; i++) {
@@ -982,6 +1009,70 @@
       if (confirm('¿Deseas eliminar esta imagen de la portada?')) {
         db.carrusel.splice(index, 1);
         renderCarrusel();
+      }
+    }
+
+    // --- TAB: AGENDA ---
+    function renderAgenda() {
+      const container = document.getElementById('agenda-card-list');
+      container.innerHTML = '';
+
+      if (!db.agenda || db.agenda.length === 0) {
+        container.innerHTML = '<div style="color: var(--color-text-muted); text-align: center; padding: 40px; font-style: italic;">No hay eventos agregados.</div>';
+        return;
+      }
+
+      db.agenda.forEach((ev, index) => {
+        const item = document.createElement('div');
+        item.className = 'card-item';
+        item.innerHTML = `
+          <div class="card-item-header">
+            <span class="card-item-title">Evento #${index + 1}</span>
+            <button onclick="eliminarAgenda(${index})" class="btn btn-danger btn-sm" style="padding: 5px 10px; font-size: 11px;">Eliminar</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 10px;">
+            <div class="form-group" style="margin:0">
+              <label>Fecha</label>
+              <input type="text" value="${ev.fecha || ''}" oninput="updateAgenda(${index}, 'fecha', this.value)" placeholder="Ej. Vie 24 jul">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Hora</label>
+              <input type="text" value="${ev.hora || ''}" oninput="updateAgenda(${index}, 'hora', this.value)" placeholder="Ej. 09:00 / —">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Deporte</label>
+              <input type="text" value="${ev.deporte || ''}" oninput="updateAgenda(${index}, 'deporte', this.value)" placeholder="Ej. Judo">
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px;">
+            <div class="form-group" style="margin:0">
+              <label>Atleta(s) / Prueba</label>
+              <input type="text" value="${ev.atletas || ''}" oninput="updateAgenda(${index}, 'atletas', this.value)" placeholder="Ej. Analeanis Collazo (-48kg)">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Evento / Fase</label>
+              <input type="text" value="${ev.evento || ''}" oninput="updateAgenda(${index}, 'evento', this.value)" placeholder="Ej. Preliminares y Finales">
+            </div>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function updateAgenda(index, key, val) {
+      db.agenda[index][key] = val;
+    }
+
+    function agregarAgenda() {
+      if (!db.agenda) db.agenda = [];
+      db.agenda.push({ fecha: "", hora: "", deporte: "", atletas: "", evento: "" });
+      renderAgenda();
+    }
+
+    function eliminarAgenda(index) {
+      if (confirm('¿Deseas eliminar este evento del calendario?')) {
+        db.agenda.splice(index, 1);
+        renderAgenda();
       }
     }
 
