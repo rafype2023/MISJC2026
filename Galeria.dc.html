@@ -115,7 +115,10 @@ class Component extends DCLogic {
   }
   listaAlbums() {
     const meses = ['jul', 'ago'];
-    const lista = [{ tag: 'LA PREVIA', fecha: 'Antes del viaje', titulo: 'La previa', key: 'previa', slotId: 'alb-previa' }];
+    const lista = [
+      { tag: 'LA PREVIA', fecha: 'Antes del viaje', titulo: 'La previa', key: 'previa', slotId: 'alb-previa' },
+      { tag: 'DÍA 0', fecha: '23 jul', titulo: 'Viaje y llegada', key: 'dia0', slotId: 'alb-dia-0' }
+    ];
     for (let i = 0; i < 16; i++) {
       const d = new Date(2026, 6, 24 + i);
       lista.push({ tag: 'DÍA ' + (i + 1), fecha: d.getDate() + ' ' + meses[d.getMonth() - 6], titulo: 'Día ' + (i + 1), key: 'dia' + (i + 1), slotId: 'alb-dia-' + (i + 1) });
@@ -126,7 +129,7 @@ class Component extends DCLogic {
         'https://www.dropbox.com/scl/fi/b1577p1tj920m19kbm0pw/IMG_2298.jpeg?rlkey=t1eucj81udw1nmibah15g1r9p&st=x2mx3gix&dl=0',
         'https://www.dropbox.com/scl/fi/kt6kejkq734a8xcr8toj5/IMG_2297.jpeg?rlkey=ayn034ydyn0s0ya3m7n80i41j&st=d2grzqnx&dl=0'
       ],
-      dia1: [], dia2: [], dia3: [], dia4: [], dia5: [], dia6: [], dia7: [], dia8: [],
+      dia0: [], dia1: [], dia2: [], dia3: [], dia4: [], dia5: [], dia6: [], dia7: [], dia8: [],
       dia9: [], dia10: [], dia11: [], dia12: [], dia13: [], dia14: [], dia15: [], dia16: []
     };
     return lista.map(a => {

@@ -59,7 +59,7 @@
   .ticker-content {
     display: flex;
     white-space: nowrap;
-    animation: marquee 35s linear infinite;
+    animation: marquee 65s linear infinite;
   }
   .ticker-content:hover {
     animation-play-state: paused;
@@ -263,10 +263,37 @@ class Component extends DCLogic {
     let ultNota = 'Fuimos a la tienda Olímpica a ver qué comprábamos para el viaje: camisas PUR, el jersey Joma oficial, pines de Santo Domingo 2026 y lanyards de Puerto Rico. ¡Ya se siente el ambiente!';
     let ultFoto = 'uploads/IMG_2296.jpeg';
     let ultSlotId = 'dia-previa';
-    let agendaItems = defaultAgenda;
+    // Determine the date to filter events for the ticker
+    const nowFilter = new Date();
+    const monthFilter = nowFilter.getMonth(); // 0-indexed, July is 6, August is 7
+    const dateFilter = nowFilter.getDate();
+    const yearFilter = nowFilter.getFullYear();
+    
+    // Default to July 24 if we are testing or it is before July 25, 2026
+    let targetDayStr = "24 jul";
+    if (yearFilter === 2026 && monthFilter === 6 && dateFilter >= 25) {
+      targetDayStr = dateFilter + " jul";
+    } else if (yearFilter === 2026 && monthFilter === 7) {
+      targetDayStr = dateFilter + " ago";
+    }
 
+    let agendaItems = defaultAgenda;
     if (this.state.data) {
       agendaItems = this.state.data.agenda || defaultAgenda;
+    }
+
+    // Filter agenda items to show only those of targetDayStr
+    agendaItems = agendaItems.filter(ev => {
+      const f = (ev.fecha || '').toLowerCase();
+      return f.includes(targetDayStr);
+    });
+
+    // If for some reason the filtered list is empty, show all as fallback
+    if (agendaItems.length === 0) {
+      agendaItems = (this.state.data && this.state.data.agenda) || defaultAgenda;
+    }
+
+    if (this.state.data) {
       const diario = this.state.data.diario || [];
       const fotosPorAlbum = this.state.data.dropbox_fotos || {};
       let lastDay = null;
