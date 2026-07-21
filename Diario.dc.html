@@ -71,7 +71,7 @@
         <h2 style="font-family:'Archivo Black'; font-size:21px; margin:0">{{ d.titulo }}</h2>
         <p style="margin:0; line-height:1.6; color:#3A4A5E">{{ d.nota }}</p>
         <div style="height:240px; border-radius:8px; overflow:hidden">
-          <image-slot id="{{ d.slotId }}" shape="rounded" radius="8" placeholder="Foto del día {{ d.num }}"></image-slot>
+          <image-slot id="{{ d.slotId }}" shape="rounded" radius="8" src="{{ d.foto }}" placeholder="Foto del día {{ d.num }}"></image-slot>
         </div>
       </div>
     </article>
@@ -93,6 +93,10 @@ class Component extends DCLogic {
       .then(r => r.json())
       .then(data => this.setState({ data }))
       .catch(err => console.error('Error al cargar diario_data.json:', err));
+  }
+  directo(url) {
+    if (!url) return '';
+    return url.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('dl=0', 'raw=1');
   }
   renderVals() {
     const defaultFechas = ['Vie 24 jul','Sáb 25 jul','Dom 26 jul','Lun 27 jul','Mar 28 jul','Mié 29 jul','Jue 30 jul','Vie 31 jul','Sáb 1 ago','Dom 2 ago','Lun 3 ago','Mar 4 ago','Mié 5 ago','Jue 6 ago','Vie 7 ago','Sáb 8 ago'];
@@ -119,15 +123,22 @@ class Component extends DCLogic {
         previaNota = p.nota;
         previaFotos = (p.fotos || []).map(f => ({ src: f }));
       }
-      dias = (this.state.data.diario || []).map(d => ({
-        num: d.num,
-        fecha: d.fecha,
-        titulo: d.titulo || 'Título de la entrada del día ' + d.num,
-        nota: d.nota || 'Aquí escribiré mi nota del día ' + d.num + ': qué eventos vi, cómo le fue a Puerto Rico y lo mejor de la jornada.',
-        slotId: 'dia-' + d.num,
-        badgeBg: d.num % 2 === 1 ? '#E03C31' : '#0B4EA2',
-        badgeFg: '#ffffff'
-      }));
+      const fotosPorAlbum = this.state.data.dropbox_fotos || {};
+      dias = (this.state.data.diario || []).map(d => {
+        const key = 'dia' + d.num;
+        const fotos = fotosPorAlbum[key] || [];
+        const primeraFoto = fotos[0] ? this.directo(fotos[0]) : '';
+        return {
+          num: d.num,
+          fecha: d.fecha,
+          titulo: d.titulo || 'Título de la entrada del día ' + d.num,
+          nota: d.nota || 'Aquí escribiré mi nota del día ' + d.num + ': qué eventos vi, cómo le fue a Puerto Rico y lo mejor de la jornada.',
+          slotId: 'dia-' + d.num,
+          foto: primeraFoto,
+          badgeBg: d.num % 2 === 1 ? '#E03C31' : '#0B4EA2',
+          badgeFg: '#ffffff'
+        };
+      });
     } else {
       dias = defaultFechas.map((fecha, i) => {
         const num = i + 1;
@@ -136,6 +147,7 @@ class Component extends DCLogic {
           titulo: defaultTitulos[num] || 'Título de la entrada del día ' + num,
           nota: 'Aquí escribiré mi nota del día ' + num + ': qué eventos vi, cómo le fue a Puerto Rico y lo mejor de la jornada.',
           slotId: 'dia-' + num,
+          foto: '',
           badgeBg: num % 2 === 1 ? '#E03C31' : '#0B4EA2',
           badgeFg: '#ffffff'
         };
