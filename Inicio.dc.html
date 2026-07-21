@@ -134,6 +134,10 @@ class Component extends DCLogic {
     this.setState({ fading: true });
     setTimeout(() => this.setState({ slide: next, fading: false }), 250);
   }
+  directo(url) {
+    if (!url) return '';
+    return url.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('dl=0', 'raw=1');
+  }
   renderVals() {
     const start = new Date(2026, 6, 24);
     const end = new Date(2026, 7, 8);
@@ -161,14 +165,16 @@ class Component extends DCLogic {
     let ultTitulo = 'Preparándonos: visita a la tienda #EquipoPUR';
     let ultNota = 'Fuimos a la tienda Olímpica a ver qué comprábamos para el viaje: camisas PUR, el jersey Joma oficial, pines de Santo Domingo 2026 y lanyards de Puerto Rico. ¡Ya se siente el ambiente!';
     let ultFoto = 'uploads/IMG_2296.jpeg';
-    let ultSlotId = 'ultima-foto';
+    let ultSlotId = 'dia-previa';
 
     if (this.state.data) {
       const diario = this.state.data.diario || [];
+      const fotosPorAlbum = this.state.data.dropbox_fotos || {};
       let lastDay = null;
       for (let i = diario.length - 1; i >= 0; i--) {
-        if (diario[i].titulo && diario[i].nota) {
-          lastDay = diario[i];
+        const d = diario[i];
+        if (d.titulo && d.nota && !d.nota.startsWith('Aquí escribiré')) {
+          lastDay = d;
           break;
         }
       }
@@ -177,7 +183,9 @@ class Component extends DCLogic {
         ultFecha = lastDay.fecha;
         ultTitulo = lastDay.titulo;
         ultNota = lastDay.nota;
-        ultFoto = '';
+        const key = 'dia' + lastDay.num;
+        const fotos = fotosPorAlbum[key] || [];
+        ultFoto = fotos[0] ? this.directo(fotos[0]) : '';
         ultSlotId = 'dia-' + lastDay.num;
       } else if (this.state.data.previa) {
         const p = this.state.data.previa;
@@ -185,7 +193,9 @@ class Component extends DCLogic {
         ultFecha = p.fecha;
         ultTitulo = p.titulo;
         ultNota = p.nota;
-        ultFoto = (p.fotos && p.fotos[0]) || 'uploads/IMG_2296.jpeg';
+        const key = 'previa';
+        const fotos = fotosPorAlbum[key] || [];
+        ultFoto = fotos[0] ? this.directo(fotos[0]) : 'uploads/IMG_2296.jpeg';
         ultSlotId = 'dia-previa';
       }
     }
